@@ -149,15 +149,15 @@
 <text x="-3.81" y="-6.35" size="1.27" layer="27">&gt;VALUE</text>
 </package>
 <package name="SOT-23">
-<wire x1="-1.8" y1="-2.1" x2="1.8" y2="-2.1" width="0.127" layer="21"/>
-<wire x1="1.8" y1="-2.1" x2="1.8" y2="2.1" width="0.127" layer="21"/>
-<wire x1="1.8" y1="2.1" x2="-1.8" y2="2.1" width="0.127" layer="21"/>
-<wire x1="-1.8" y1="2.1" x2="-1.8" y2="-2.1" width="0.127" layer="21"/>
-<smd name="P$1" x="-0.95" y="-1.1" dx="1" dy="1.4" layer="1"/>
-<smd name="P$2" x="0.95" y="-1.1" dx="1" dy="1.4" layer="1"/>
-<smd name="P$3" x="0" y="1.1" dx="1" dy="1.4" layer="1"/>
-<text x="-2.54" y="2.54" size="1.27" layer="25">&gt;NAME</text>
-<text x="-2.54" y="-3.81" size="1.27" layer="27">&gt;VALUE</text>
+<wire x1="-1.5" y1="-0.65" x2="1.5" y2="-0.65" width="0.127" layer="21"/>
+<wire x1="1.5" y1="-0.65" x2="1.5" y2="0.65" width="0.127" layer="21"/>
+<wire x1="1.5" y1="0.65" x2="-1.5" y2="0.65" width="0.127" layer="21"/>
+<wire x1="-1.5" y1="0.65" x2="-1.5" y2="-0.65" width="0.127" layer="21"/>
+<smd name="1" x="-0.95" y="-1.1" dx="1" dy="1.4" layer="1"/>
+<smd name="2" x="0.95" y="-1.1" dx="1" dy="1.4" layer="1"/>
+<smd name="3" x="0" y="1.1" dx="1" dy="1.4" layer="1"/>
+<text x="0" y="2.54" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center">&gt;NAME</text>
+<text x="0" y="-3.81" size="1.016" layer="27" font="vector" ratio="12" align="bottom-center">&gt;VALUE</text>
 </package>
 <package name="SSOP-20">
 <wire x1="-2.65" y1="3.75" x2="-2.65" y2="-3.75" width="0.127" layer="21"/>
@@ -978,6 +978,23 @@
 <text x="0" y="3" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center">&gt;NAME</text>
 <text x="0" y="-4" size="1.016" layer="27" font="vector" ratio="12" align="bottom-center">&gt;VALUE</text>
 </package>
+<package name="RELAY_SX16S0X">
+<pad name="1" x="-7.602" y="0" drill="1.25"/>
+<pad name="4" x="7.602" y="0" drill="1.25"/>
+<pad name="3" x="5.062" y="0" drill="1.25"/>
+<pad name="2" x="-2.522" y="0" drill="1.25"/>
+<wire x1="-9.25" y1="1.4" x2="-9.25" y2="-4.1" width="0.127" layer="21"/>
+<wire x1="-9.25" y1="-4.1" x2="9.25" y2="-4.1" width="0.127" layer="21"/>
+<wire x1="9.25" y1="-4.1" x2="9.25" y2="1.4" width="0.127" layer="21"/>
+<wire x1="9.25" y1="1.4" x2="-9.25" y2="1.4" width="0.127" layer="21"/>
+<text x="0" y="1.905" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center">&gt;NAME</text>
+<text x="0" y="-5.715" size="1.016" layer="27" font="vector" ratio="12" align="bottom-center">&gt;VALUE</text>
+<text x="-5.08" y="-3.81" size="0.762" layer="51" font="vector" ratio="12" align="bottom-center">16A250VAC</text>
+<text x="-7.62" y="-2.54" size="0.762" layer="51" font="vector" ratio="12" align="bottom-center">T2</text>
+<text x="-2.54" y="-2.54" size="0.762" layer="51" font="vector" ratio="12" align="bottom-center">T1</text>
+<text x="5.08" y="-2.54" size="0.762" layer="51" font="vector" ratio="12" align="bottom-center">+</text>
+<text x="7.62" y="-2.54" size="0.762" layer="51" font="vector" ratio="12" align="bottom-center">-</text>
+</package>
 </packages>
 <symbols>
 <symbol name="SR10">
@@ -1735,6 +1752,68 @@
 <text x="-2.54" y="2.54" size="1.27" layer="95">&gt;NAME</text>
 <text x="-2.54" y="-3.81" size="1.27" layer="96">&gt;VALUE</text>
 </symbol>
+<symbol name="SS_RELAY">
+<pin name="3" x="-10.16" y="2.54" visible="pad" length="short"/>
+<pin name="4" x="-10.16" y="-2.54" visible="pad" length="short"/>
+<pin name="1" x="10.16" y="2.54" visible="pad" length="short" rot="R180"/>
+<pin name="2" x="10.16" y="-2.54" visible="pad" length="short" rot="R180"/>
+<wire x1="-7.62" y1="5.08" x2="-7.62" y2="2.54" width="0.254" layer="94"/>
+<wire x1="-7.62" y1="2.54" x2="-7.62" y2="-2.54" width="0.254" layer="94"/>
+<wire x1="-7.62" y1="-2.54" x2="-7.62" y2="-5.08" width="0.254" layer="94"/>
+<wire x1="-7.62" y1="-5.08" x2="7.62" y2="-5.08" width="0.254" layer="94"/>
+<wire x1="7.62" y1="-5.08" x2="7.62" y2="-2.54" width="0.254" layer="94"/>
+<wire x1="7.62" y1="-2.54" x2="7.62" y2="2.54" width="0.254" layer="94"/>
+<wire x1="7.62" y1="2.54" x2="7.62" y2="5.08" width="0.254" layer="94"/>
+<wire x1="7.62" y1="5.08" x2="-7.62" y2="5.08" width="0.254" layer="94"/>
+<wire x1="-7.62" y1="2.54" x2="-5.08" y2="2.54" width="0.254" layer="94"/>
+<wire x1="-5.08" y1="2.54" x2="-5.08" y2="-2.54" width="0.254" layer="94"/>
+<wire x1="-5.08" y1="-2.54" x2="-7.62" y2="-2.54" width="0.254" layer="94"/>
+<wire x1="7.62" y1="2.54" x2="5.08" y2="2.54" width="0.254" layer="94"/>
+<wire x1="7.62" y1="-2.54" x2="5.08" y2="-2.54" width="0.254" layer="94"/>
+<polygon width="0.254" layer="94">
+<vertex x="-6.35" y="1.27"/>
+<vertex x="-3.81" y="1.27"/>
+<vertex x="-5.08" y="-0.635"/>
+</polygon>
+<wire x1="-6.35" y1="-0.635" x2="-3.81" y2="-0.635" width="0.254" layer="94"/>
+<wire x1="6.985" y1="0.635" x2="5.08" y2="0.635" width="0.254" layer="94"/>
+<wire x1="5.08" y1="0.635" x2="3.175" y2="0.635" width="0.254" layer="94"/>
+<wire x1="6.985" y1="-0.635" x2="5.08" y2="-0.635" width="0.254" layer="94"/>
+<polygon width="0.254" layer="94">
+<vertex x="6.35" y="-0.635"/>
+<vertex x="5.715" y="0.635"/>
+<vertex x="5.08" y="-0.635"/>
+</polygon>
+<polygon width="0.254" layer="94">
+<vertex x="3.81" y="0.635"/>
+<vertex x="4.445" y="-0.635"/>
+<vertex x="5.08" y="0.635"/>
+</polygon>
+<wire x1="5.08" y1="-0.635" x2="3.175" y2="-0.635" width="0.254" layer="94"/>
+<wire x1="5.08" y1="0.635" x2="5.08" y2="2.54" width="0.254" layer="94"/>
+<wire x1="5.08" y1="-2.54" x2="5.08" y2="-0.635" width="0.254" layer="94"/>
+<wire x1="-2.54" y1="0.635" x2="-0.635" y2="-0.635" width="0.254" layer="94"/>
+<wire x1="-0.635" y1="-0.635" x2="-0.635" y2="1.27" width="0.254" layer="94"/>
+<wire x1="-0.635" y1="1.27" x2="1.27" y2="0" width="0.254" layer="94"/>
+<polygon width="0.254" layer="94">
+<vertex x="0.889" y="-0.381"/>
+<vertex x="1.651" y="0.381"/>
+<vertex x="2.032" y="-0.635"/>
+</polygon>
+<text x="-6.985" y="5.715" size="1.27" layer="95" ratio="12">&gt;NAME</text>
+<text x="-6.985" y="-6.985" size="1.27" layer="96" ratio="12">&gt;VALUE</text>
+</symbol>
+<symbol name="DIODE">
+<pin name="1" x="0" y="2.54" visible="off" length="point"/>
+<pin name="2" x="0" y="-2.54" visible="off" length="point"/>
+<wire x1="0" y1="-2.54" x2="0" y2="1.016" width="0.254" layer="94"/>
+<wire x1="0" y1="1.016" x2="0" y2="2.54" width="0.254" layer="94"/>
+<wire x1="-1.016" y1="1.016" x2="0" y2="1.016" width="0.254" layer="94"/>
+<wire x1="0" y1="1.016" x2="1.016" y2="1.016" width="0.254" layer="94"/>
+<wire x1="-1.016" y1="-0.762" x2="1.016" y2="-0.762" width="0.254" layer="94"/>
+<wire x1="1.016" y1="-0.762" x2="0" y2="1.016" width="0.254" layer="94"/>
+<wire x1="0" y1="1.016" x2="-1.016" y2="-0.762" width="0.254" layer="94"/>
+</symbol>
 </symbols>
 <devicesets>
 <deviceset name="SR10">
@@ -1882,9 +1961,9 @@
 <devices>
 <device name="" package="SOT-23">
 <connects>
-<connect gate="G$1" pin="P$1" pad="P$1"/>
-<connect gate="G$1" pin="VIN" pad="P$3"/>
-<connect gate="G$1" pin="VOUT" pad="P$2"/>
+<connect gate="G$1" pin="P$1" pad="1"/>
+<connect gate="G$1" pin="VIN" pad="3"/>
+<connect gate="G$1" pin="VOUT" pad="2"/>
 </connects>
 <technologies>
 <technology name=""/>
@@ -3255,6 +3334,67 @@
 <technologies>
 <technology name="">
 <attribute name="DIGIKEY" value="XC1234CT-ND" constant="no"/>
+</technology>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="S216S01F" prefix="K">
+<description>RELAY SSR 240VAC 16A TRIAC 4-SIP</description>
+<gates>
+<gate name="G$1" symbol="SS_RELAY" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="RELAY_SX16S0X">
+<connects>
+<connect gate="G$1" pin="1" pad="1"/>
+<connect gate="G$1" pin="2" pad="2"/>
+<connect gate="G$1" pin="3" pad="3"/>
+<connect gate="G$1" pin="4" pad="4"/>
+</connects>
+<technologies>
+<technology name="">
+<attribute name="DIGIKEY" value="425-2413-5-ND" constant="no"/>
+<attribute name="MOUSER" value="852-S216S01F" constant="no"/>
+<attribute name="NEWARK" value="14N9591" constant="no"/>
+</technology>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="DIODE_MMBD914" prefix="D">
+<description>DIODE SML SIG 100V 0.2A SOT23-3</description>
+<gates>
+<gate name="G$1" symbol="DIODE" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="SOT-23">
+<connects>
+<connect gate="G$1" pin="1" pad="3"/>
+<connect gate="G$1" pin="2" pad="1"/>
+</connects>
+<technologies>
+<technology name="">
+<attribute name="DIGIKEY" value="MMBD914FSCT-ND" constant="no"/>
+</technology>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="FDV301N">
+<gates>
+<gate name="G$1" symbol="NCHAN_MOSFET" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="SOT-23">
+<connects>
+<connect gate="G$1" pin="D" pad="3"/>
+<connect gate="G$1" pin="G" pad="1"/>
+<connect gate="G$1" pin="S" pad="2"/>
+</connects>
+<technologies>
+<technology name="">
+<attribute name="DIGIKEY" value="FDV301NCT-ND" constant="no"/>
 </technology>
 </technologies>
 </device>
