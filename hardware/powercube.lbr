@@ -218,15 +218,15 @@
 <pad name="P$2" x="6.35" y="0" drill="3.683" diameter="4.699" rot="R90"/>
 <text x="-2.54" y="3.81" size="1.27" layer="25">&gt;NAME</text>
 </package>
-<package name="EMI_SUPRESSION_FERRITE_BEAD">
-<wire x1="-3" y1="1.27" x2="-3" y2="-1.27" width="0.127" layer="21"/>
-<wire x1="-3" y1="-1.27" x2="3" y2="-1.27" width="0.127" layer="21"/>
-<wire x1="3" y1="-1.27" x2="3" y2="1.27" width="0.127" layer="21"/>
-<wire x1="3" y1="1.27" x2="-3" y2="1.27" width="0.127" layer="21"/>
+<package name="L1806">
+<wire x1="-1.25" y1="0.8" x2="-1.25" y2="-0.8" width="0.127" layer="21"/>
+<wire x1="-1.25" y1="-0.8" x2="1.25" y2="-0.8" width="0.127" layer="21"/>
+<wire x1="1.25" y1="-0.8" x2="1.25" y2="0.8" width="0.127" layer="21"/>
+<wire x1="1.25" y1="0.8" x2="-1.25" y2="0.8" width="0.127" layer="21"/>
 <smd name="P$1" x="-2.1" y="0" dx="1.4" dy="2.24" layer="1"/>
 <smd name="P$2" x="2.1" y="0" dx="1.4" dy="2.24" layer="1"/>
-<text x="-3.175" y="1.905" size="1.27" layer="25">&gt;NAME</text>
-<text x="-3.175" y="-3.175" size="1.27" layer="27">&gt;VALUE</text>
+<text x="0" y="1.27" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center">&gt;NAME</text>
+<text x="0" y="-2.54" size="1.016" layer="27" font="vector" ratio="12" align="bottom-center">&gt;VALUE</text>
 </package>
 <package name="0603_RESISTOR">
 <wire x1="-0.4" y1="-0.4" x2="0.4" y2="-0.4" width="0.127" layer="21"/>
@@ -994,6 +994,51 @@
 <text x="-2.54" y="-2.54" size="0.762" layer="51" font="vector" ratio="12" align="bottom-center">T1</text>
 <text x="5.08" y="-2.54" size="0.762" layer="51" font="vector" ratio="12" align="bottom-center">+</text>
 <text x="7.62" y="-2.54" size="0.762" layer="51" font="vector" ratio="12" align="bottom-center">-</text>
+</package>
+<package name="35F0102">
+<smd name="1" x="-1.7907" y="0" dx="2.7686" dy="1.4732" layer="1"/>
+<smd name="2" x="1.7907" y="0" dx="2.7686" dy="1.4732" layer="1"/>
+<wire x1="-2.032" y1="1.524" x2="2.032" y2="1.524" width="0.127" layer="21"/>
+<wire x1="2.032" y1="1.524" x2="2.032" y2="-1.524" width="0.127" layer="21"/>
+<wire x1="2.032" y1="-1.524" x2="-2.032" y2="-1.524" width="0.127" layer="21"/>
+<wire x1="-2.032" y1="-1.524" x2="-2.032" y2="1.524" width="0.127" layer="21"/>
+<text x="0" y="1.905" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center">&gt;NAME</text>
+<text x="0" y="-3.175" size="1.016" layer="27" font="vector" ratio="12" align="bottom-center">&gt;VALUE</text>
+</package>
+<package name="AC_MALE_PINS">
+<pad name="NEUTRAL" x="0" y="-5.9944" drill="2.3368" shape="long"/>
+<pad name="GND" x="11.938" y="0" drill="6.4262"/>
+<pad name="N11" x="2.794" y="-5.9944" drill="2.3368"/>
+<rectangle x1="-2.794" y1="-7.6708" x2="2.794" y2="-4.318" layer="17"/>
+<pad name="N1" x="-2.794" y="-5.9944" drill="2.3368"/>
+<pad name="N2" x="-2.3876" y="-5.9944" drill="2.3368"/>
+<pad name="N3" x="-1.8796" y="-5.9944" drill="2.3368"/>
+<pad name="N4" x="-1.3716" y="-5.9944" drill="2.3368"/>
+<pad name="N5" x="-0.8636" y="-5.9944" drill="2.3368"/>
+<pad name="N6" x="-0.3556" y="-5.9944" drill="2.3368"/>
+<pad name="N10" x="2.286" y="-5.9944" drill="2.3368"/>
+<pad name="N9" x="1.778" y="-5.9944" drill="2.3368"/>
+<pad name="N8" x="1.27" y="-5.9944" drill="2.3368"/>
+<pad name="N7" x="0.762" y="-5.9944" drill="2.3368"/>
+<pad name="N12" x="0.254" y="-5.9944" drill="2.3368"/>
+<pad name="PHASE" x="0" y="5.9944" drill="2.3368" shape="long"/>
+<pad name="P12" x="2.794" y="5.9944" drill="2.3368"/>
+<rectangle x1="-2.794" y1="4.318" x2="2.794" y2="7.6708" layer="17"/>
+<pad name="P1" x="-2.794" y="5.9944" drill="2.3368"/>
+<pad name="P2" x="-2.3876" y="5.9944" drill="2.3368"/>
+<pad name="P3" x="-1.8796" y="5.9944" drill="2.3368"/>
+<pad name="P4" x="-1.3716" y="5.9944" drill="2.3368"/>
+<pad name="P5" x="-0.8636" y="5.9944" drill="2.3368"/>
+<pad name="P6" x="-0.3556" y="5.9944" drill="2.3368"/>
+<pad name="P11" x="2.286" y="5.9944" drill="2.3368"/>
+<pad name="P10" x="1.778" y="5.9944" drill="2.3368"/>
+<pad name="P9" x="1.27" y="5.9944" drill="2.3368"/>
+<pad name="P8" x="0.762" y="5.9944" drill="2.3368"/>
+<pad name="P7" x="0.254" y="5.9944" drill="2.3368"/>
+<smd name="GND_TAB" x="27.813" y="0" dx="19.05" dy="4.7625" layer="16" cream="no"/>
+</package>
+<package name="WIRE_HOLE-14AWG">
+<pad name="P$1" x="0" y="0" drill="2.286" shape="long"/>
 </package>
 </packages>
 <symbols>
@@ -1814,6 +1859,23 @@
 <wire x1="1.016" y1="-0.762" x2="0" y2="1.016" width="0.254" layer="94"/>
 <wire x1="0" y1="1.016" x2="-1.016" y2="-0.762" width="0.254" layer="94"/>
 </symbol>
+<symbol name="AC-PLUG">
+<pin name="PHASE" x="10.16" y="2.54" visible="pin" length="short" rot="R180"/>
+<pin name="NEUTRAL" x="10.16" y="0" visible="pin" length="short" rot="R180"/>
+<pin name="GND" x="10.16" y="-2.54" visible="pin" length="short" rot="R180"/>
+<wire x1="7.62" y1="5.08" x2="7.62" y2="-5.08" width="0.254" layer="94"/>
+<wire x1="7.62" y1="-5.08" x2="-7.62" y2="-5.08" width="0.254" layer="94"/>
+<wire x1="-7.62" y1="-5.08" x2="-7.62" y2="5.08" width="0.254" layer="94"/>
+<wire x1="-7.62" y1="5.08" x2="7.62" y2="5.08" width="0.254" layer="94"/>
+<text x="-7.62" y="5.842" size="1.27" layer="95" ratio="12">&gt;NAME</text>
+<text x="-7.62" y="-7.62" size="1.27" layer="96" ratio="12">&gt;VALUE</text>
+</symbol>
+<symbol name="WIRE_HOLE">
+<circle x="0" y="0" radius="1.27" width="0.254" layer="94"/>
+<pin name="P$1" x="2.54" y="0" visible="off" length="short" rot="R180"/>
+<text x="0" y="2.54" size="1.27" layer="95" ratio="12">&gt;NAME</text>
+<text x="0" y="-3.81" size="1.27" layer="96" ratio="12">&gt;VALUE</text>
+</symbol>
 </symbols>
 <devicesets>
 <deviceset name="SR10">
@@ -2071,18 +2133,21 @@
 </device>
 </devices>
 </deviceset>
-<deviceset name="EMI_SUPRESSION_FERRITE_BEAD">
+<deviceset name="EMI_SUPRESSION_FERRITE_BEAD" prefix="L">
+<description>FERRITE 300MA 150 OHM 1806 SMD</description>
 <gates>
 <gate name="G$1" symbol="EMI_SUPPRESSION_FERRITE_BEAD" x="0" y="0"/>
 </gates>
 <devices>
-<device name="" package="EMI_SUPRESSION_FERRITE_BEAD">
+<device name="" package="L1806">
 <connects>
 <connect gate="G$1" pin="P$1" pad="P$1"/>
 <connect gate="G$1" pin="P$2" pad="P$2"/>
 </connects>
 <technologies>
-<technology name=""/>
+<technology name="">
+<attribute name="DIGIKEY" value="240-2418-1-ND" constant="no"/>
+</technology>
 </technologies>
 </device>
 </devices>
@@ -3396,6 +3461,71 @@
 <technology name="">
 <attribute name="DIGIKEY" value="FDV301NCT-ND" constant="no"/>
 </technology>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="35F0121-0SR-10" prefix="L">
+<description>FERRITE 10A 42 OHMS @ 10 MHZ SMD</description>
+<gates>
+<gate name="G$1" symbol="EMI_SUPPRESSION_FERRITE_BEAD" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="35F0102">
+<connects>
+<connect gate="G$1" pin="P$1" pad="1"/>
+<connect gate="G$1" pin="P$2" pad="2"/>
+</connects>
+<technologies>
+<technology name="">
+<attribute name="DIGIKEY" value="240-2520-1-ND" constant="no"/>
+</technology>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="AC-PLUG" prefix="J">
+<description>For use with Bud Industries Box: 377-1709-ND</description>
+<gates>
+<gate name="G$1" symbol="AC-PLUG" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="AC_MALE_PINS">
+<connects>
+<connect gate="G$1" pin="GND" pad="GND GND_TAB"/>
+<connect gate="G$1" pin="NEUTRAL" pad="N1 N2 N3 N4 N5 N6 N7 N8 N9 N10 N11 NEUTRAL"/>
+<connect gate="G$1" pin="PHASE" pad="N12 P1 P2 P3 P4 P5 P6 P7 P8 P9 P10 P11 P12 PHASE"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="WIRE_HOLD">
+<gates>
+<gate name="G$1" symbol="WIRE_HOLE" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="WIRE_HOLE-14AWG">
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="WIRE_HOLE-14AWG" prefix="J">
+<description>Solder point for 14AWG wire</description>
+<gates>
+<gate name="G$1" symbol="WIRE_HOLE" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="WIRE_HOLE-14AWG">
+<connects>
+<connect gate="G$1" pin="P$1" pad="P$1"/>
+</connects>
+<technologies>
+<technology name=""/>
 </technologies>
 </device>
 </devices>
