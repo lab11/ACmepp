@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.05" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.025" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="yes" active="yes"/>
@@ -3616,8 +3616,8 @@
 <device name="" package="AC_MALE_PINS">
 <connects>
 <connect gate="G$1" pin="GND" pad="GND GND_TAB"/>
-<connect gate="G$1" pin="NEUTRAL" pad="N1 N2 N3 N4 N5 N6 N7 N8 N9 N10 N11 NEUTRAL"/>
-<connect gate="G$1" pin="PHASE" pad="N12 P1 P2 P3 P4 P5 P6 P7 P8 P9 P10 P11 P12 PHASE"/>
+<connect gate="G$1" pin="NEUTRAL" pad="N1 N2 N3 N4 N5 N6 N7 N8 N9 N10 N11 N12 NEUTRAL"/>
+<connect gate="G$1" pin="PHASE" pad="P1 P2 P3 P4 P5 P6 P7 P8 P9 P10 P11 P12 PHASE"/>
 </connects>
 <technologies>
 <technology name=""/>
