@@ -6044,10 +6044,10 @@ To use, set global attributes TITLE and REV in your schematic.</description>
 <text x="0" y="-4" size="1.016" layer="27" font="vector" ratio="12" align="bottom-center">&gt;VALUE</text>
 </package>
 <package name="RELAY_SX16S0X">
-<pad name="1" x="-7.602" y="0" drill="1.25"/>
+<pad name="1" x="-7.602" y="0" drill="1.25" diameter="2.54"/>
 <pad name="4" x="7.602" y="0" drill="1.25"/>
 <pad name="3" x="5.062" y="0" drill="1.25"/>
-<pad name="2" x="-2.522" y="0" drill="1.25"/>
+<pad name="2" x="-2.522" y="0" drill="1.25" diameter="2.54"/>
 <wire x1="-9.25" y1="1.4" x2="-9.25" y2="-4.1" width="0.127" layer="21"/>
 <wire x1="-9.25" y1="-4.1" x2="9.25" y2="-4.1" width="0.127" layer="21"/>
 <wire x1="9.25" y1="-4.1" x2="9.25" y2="1.4" width="0.127" layer="21"/>
@@ -8251,7 +8251,7 @@ Basic schematic elements and footprints for 0603, 1206, and PTH resistors.</desc
 <label x="45.72" y="154.94" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
-<net name="N$1" class="0">
+<net name="DC_RECTIFIED" class="0">
 <segment>
 <pinref part="D3" gate="G$1" pin="POS"/>
 <pinref part="R1" gate="G$1" pin="2"/>
@@ -8280,7 +8280,7 @@ Basic schematic elements and footprints for 0603, 1206, and PTH resistors.</desc
 <wire x1="91.44" y1="147.32" x2="91.44" y2="149.86" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$19" class="0">
+<net name="SR086_VIN" class="0">
 <segment>
 <pinref part="U2" gate="G$1" pin="VIN"/>
 <pinref part="R5" gate="G$1" pin="1"/>
@@ -8288,7 +8288,7 @@ Basic schematic elements and footprints for 0603, 1206, and PTH resistors.</desc
 <wire x1="91.44" y1="111.76" x2="91.44" y2="137.16" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$22" class="0">
+<net name="SR086_GATE" class="0">
 <segment>
 <pinref part="Q1" gate="G$1" pin="G"/>
 <pinref part="U2" gate="G$1" pin="GATE"/>

@@ -983,10 +983,10 @@
 <text x="0" y="-4" size="1.016" layer="27" font="vector" ratio="12" align="bottom-center">&gt;VALUE</text>
 </package>
 <package name="RELAY_SX16S0X">
-<pad name="1" x="-7.602" y="0" drill="1.25"/>
+<pad name="1" x="-7.602" y="0" drill="1.25" diameter="2.54"/>
 <pad name="4" x="7.602" y="0" drill="1.25"/>
 <pad name="3" x="5.062" y="0" drill="1.25"/>
-<pad name="2" x="-2.522" y="0" drill="1.25"/>
+<pad name="2" x="-2.522" y="0" drill="1.25" diameter="2.54"/>
 <wire x1="-9.25" y1="1.4" x2="-9.25" y2="-4.1" width="0.127" layer="21"/>
 <wire x1="-9.25" y1="-4.1" x2="9.25" y2="-4.1" width="0.127" layer="21"/>
 <wire x1="9.25" y1="-4.1" x2="9.25" y2="1.4" width="0.127" layer="21"/>
