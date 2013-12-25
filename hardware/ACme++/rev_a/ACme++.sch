@@ -9687,26 +9687,26 @@ Standard schematic elements and footprints for 5mm, 3mm, 1206, and 0603 sized LE
 <junction x="27.94" y="91.44"/>
 </segment>
 <segment>
-<pinref part="K1" gate="G$1" pin="1"/>
-<wire x1="63.5" y1="35.56" x2="66.04" y2="35.56" width="0.1524" layer="91"/>
-<label x="66.04" y="35.56" size="1.27" layer="95" xref="yes"/>
-</segment>
-<segment>
 <pinref part="J1" gate="G$1" pin="PHASE"/>
 <wire x1="157.48" y1="170.18" x2="160.02" y2="170.18" width="0.1524" layer="91"/>
 <label x="160.02" y="170.18" size="1.27" layer="95" xref="yes"/>
 </segment>
-</net>
-<net name="LOAD_PHASE" class="0">
 <segment>
 <pinref part="K1" gate="G$1" pin="2"/>
 <wire x1="63.5" y1="30.48" x2="66.04" y2="30.48" width="0.1524" layer="91"/>
 <label x="66.04" y="30.48" size="1.27" layer="95" xref="yes"/>
 </segment>
+</net>
+<net name="LOAD_PHASE" class="0">
 <segment>
 <pinref part="J2" gate="G$1" pin="P$1"/>
 <wire x1="220.98" y1="170.18" x2="218.44" y2="170.18" width="0.1524" layer="91"/>
 <label x="218.44" y="170.18" size="1.27" layer="95" rot="R180" xref="yes"/>
+</segment>
+<segment>
+<pinref part="K1" gate="G$1" pin="1"/>
+<wire x1="63.5" y1="35.56" x2="66.04" y2="35.56" width="0.1524" layer="91"/>
+<label x="66.04" y="35.56" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="N$14" class="0">
