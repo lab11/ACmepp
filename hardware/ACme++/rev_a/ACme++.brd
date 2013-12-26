@@ -167,11 +167,11 @@ CTRL</text>
 <text x="22.86" y="11.049" size="2.54" layer="21" font="fixed" align="center">+</text>
 <text x="12.573" y="8.001" size="1.016" layer="21" font="vector" ratio="13">Brad Campbell</text>
 <text x="12.573" y="6.731" size="0.762" layer="21" font="vector" ratio="12">2014/01/01</text>
-<text x="69.85" y="35.56" size="2.54" layer="21" font="fixed" ratio="12" align="center">A</text>
-<wire x1="68.453" y1="36.83" x2="68.453" y2="33.909" width="0.254" layer="21"/>
-<wire x1="68.453" y1="33.909" x2="71.247" y2="33.909" width="0.254" layer="21"/>
-<wire x1="71.247" y1="33.909" x2="71.247" y2="36.83" width="0.254" layer="21"/>
-<wire x1="71.247" y1="36.83" x2="68.453" y2="36.83" width="0.254" layer="21"/>
+<text x="2.286" y="11.176" size="2.54" layer="21" font="fixed" ratio="12" align="center">A</text>
+<wire x1="0.889" y1="12.446" x2="0.889" y2="9.525" width="0.254" layer="21"/>
+<wire x1="0.889" y1="9.525" x2="3.683" y2="9.525" width="0.254" layer="21"/>
+<wire x1="3.683" y1="9.525" x2="3.683" y2="12.446" width="0.254" layer="21"/>
+<wire x1="3.683" y1="12.446" x2="0.889" y2="12.446" width="0.254" layer="21"/>
 <text x="63.881" y="26.924" size="1.27" layer="21" font="vector" ratio="12" rot="SR270" align="top-center">N</text>
 <text x="63.881" y="19.939" size="1.27" layer="21" font="vector" ratio="12" rot="SR270" align="top-center">P</text>
 <polygon width="0" layer="30" spacing="0.254" pour="hatch">
@@ -1268,7 +1268,7 @@ This Sunstone Circuits 2 Layer .DRU has been set to cover our minimum requiremen
 </element>
 <element name="A1" library="chips" package="FRACTUS-ANTENNA-FR05-S1-N-0-001" value="FRACTUS-2.4GHZ-FR05-S1-N-0-001" x="8.1153" y="11.43" smashed="yes" rot="R90">
 <attribute name="RICHARDSON_RFPD" value="FR05-S1-N-0001B" x="8.1153" y="11.43" size="1.778" layer="27" rot="R90" display="off"/>
-<attribute name="NAME" x="4.4963" y="11.43" size="1.016" layer="25" font="vector" ratio="12" rot="SR270" align="top-center"/>
+<attribute name="NAME" x="11.938" y="14.5293" size="1.016" layer="25" font="vector" ratio="12" align="center-left"/>
 <attribute name="VALUE" x="13.1153" y="11.43" size="1.016" layer="27" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
 <element name="U1" library="chips" package="S-PVQFN-N56" value="CC2538" x="8.509" y="25.019" smashed="yes" rot="R270">
