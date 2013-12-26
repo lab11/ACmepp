@@ -954,14 +954,15 @@
 <text x="5.08" y="-3.81" size="1.27" layer="25" rot="R90">&gt;VALUE</text>
 </package>
 <package name="2917">
-<smd name="+" x="-2.85" y="0" dx="1.6" dy="2.6" layer="1"/>
-<smd name="-" x="2.85" y="0" dx="1.6" dy="2.6" layer="1"/>
-<wire x1="-1.5875" y1="1.27" x2="-1.5875" y2="0.9525" width="0.127" layer="21"/>
-<wire x1="-1.5875" y1="0.9525" x2="-1.5875" y2="0.635" width="0.127" layer="21"/>
-<wire x1="-1.905" y1="0.9525" x2="-1.5875" y2="0.9525" width="0.127" layer="21"/>
-<wire x1="-1.5875" y1="0.9525" x2="-1.27" y2="0.9525" width="0.127" layer="21"/>
-<text x="-2.54" y="1.27" size="0.8128" layer="25">&gt;NAME</text>
-<text x="-2.54" y="-2.2225" size="0.8128" layer="27">&gt;VALUE</text>
+<smd name="+" x="-3.5" y="0" dx="1.6" dy="2.6" layer="1"/>
+<smd name="-" x="3.5" y="0" dx="1.6" dy="2.6" layer="1"/>
+<text x="0" y="2.5" size="1.016" layer="25" font="vector" ratio="12" align="bottom-center">&gt;NAME</text>
+<text x="0" y="-3.8" size="1.016" layer="27" font="vector" ratio="12" align="bottom-center">&gt;VALUE</text>
+<wire x1="-3.65" y1="2.15" x2="3.65" y2="2.15" width="0.127" layer="21"/>
+<wire x1="3.65" y1="2.15" x2="3.65" y2="-2.15" width="0.127" layer="21"/>
+<wire x1="3.65" y1="-2.15" x2="-3.65" y2="-2.15" width="0.127" layer="21"/>
+<wire x1="-3.65" y1="-2.15" x2="-3.65" y2="2.15" width="0.127" layer="21"/>
+<wire x1="-2" y1="2.4" x2="-2" y2="-2.4" width="0.25" layer="21"/>
 </package>
 <package name="DO214_TVS">
 <smd name="CATHODE" x="-2.1844" y="0" dx="2.0828" dy="1.778" layer="1"/>
@@ -1039,7 +1040,6 @@
 <pad name="P9" x="1.27" y="5.9944" drill="2.3368"/>
 <pad name="P8" x="0.762" y="5.9944" drill="2.3368"/>
 <pad name="P7" x="0.254" y="5.9944" drill="2.3368"/>
-<smd name="GND_TAB" x="27.813" y="0" dx="19.05" dy="4.7625" layer="16" cream="no"/>
 </package>
 <package name="WIRE_HOLE-14AWG">
 <pad name="P$1" x="0" y="0" drill="2.286" shape="long"/>
@@ -2182,6 +2182,8 @@
 <technologies>
 <technology name="">
 <attribute name="DIGIKEY" value="ADE7753ARSZRLCT-ND" constant="no"/>
+<attribute name="MOUSER" value=" 584-ADE7753ARSZR " constant="no"/>
+<attribute name="NEWARK" value="59K0984" constant="no"/>
 </technology>
 </technologies>
 </device>
@@ -3476,7 +3478,7 @@
 </deviceset>
 <deviceset name="CAP_POL" prefix="C" uservalue="yes">
 <gates>
-<gate name="G$1" symbol="POLARIZED_CAP" x="0" y="0"/>
+<gate name="G$1" symbol="CAP_POL" x="0" y="0"/>
 </gates>
 <devices>
 <device name="" package="2917">
@@ -3615,7 +3617,7 @@
 <devices>
 <device name="" package="AC_MALE_PINS">
 <connects>
-<connect gate="G$1" pin="GND" pad="GND GND_TAB"/>
+<connect gate="G$1" pin="GND" pad="GND"/>
 <connect gate="G$1" pin="NEUTRAL" pad="N1 N2 N3 N4 N5 N6 N7 N8 N9 N10 N11 N12 NEUTRAL"/>
 <connect gate="G$1" pin="PHASE" pad="P1 P2 P3 P4 P5 P6 P7 P8 P9 P10 P11 P12 PHASE"/>
 </connects>
