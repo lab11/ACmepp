@@ -1376,7 +1376,7 @@ This Sunstone Circuits 2 Layer .DRU has been set to cover our minimum requiremen
 </element>
 <element name="C18" library="passives" package="0402_CAP" value="0.1uF" x="1.651" y="22.479" smashed="yes" rot="R90">
 <attribute name="DIGIKEY" value="445-1265-1-ND" x="1.651" y="22.479" size="1.778" layer="27" rot="R90" display="off"/>
-<attribute name="NAME" x="1.397" y="22.479" size="0.762" layer="49" font="vector" ratio="12" align="center-right"/>
+<attribute name="NAME" x="1.27" y="22.479" size="0.762" layer="49" font="vector" ratio="12" rot="SR270" align="top-center"/>
 <attribute name="VALUE" x="3.048" y="22.479" size="1.016" layer="27" font="vector" ratio="12" rot="R90" align="bottom-center"/>
 </element>
 <element name="R11" library="passives" package="0402_RES" value="2.2k" x="2.667" y="22.479" smashed="yes" rot="R270">
