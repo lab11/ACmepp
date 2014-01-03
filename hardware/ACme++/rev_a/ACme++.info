@@ -1,3 +1,4 @@
-AUTHOR: Brad Campbell
-REV: A
-TITLE: ACme++
+title: ACme++
+rev: A
+description: AC Power Meter for plug loads.
+author: Brad Campbell
