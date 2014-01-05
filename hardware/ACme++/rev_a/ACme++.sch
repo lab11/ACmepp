@@ -2537,35 +2537,71 @@ To use, set global attributes TITLE and REV in your schematic.</description>
 <circle x="-2.3" y="3.1" radius="0.2" width="0" layer="21"/>
 </package>
 <package name="AC_MALE_PINS_2">
-<pad name="NEUTRAL" x="0" y="-5.9944" drill="2.3368" shape="long"/>
-<pad name="N11" x="2.794" y="-5.9944" drill="2.3368"/>
-<rectangle x1="-2.794" y1="-7.6708" x2="2.794" y2="-4.318" layer="17"/>
-<pad name="N1" x="-2.794" y="-5.9944" drill="2.3368"/>
-<pad name="N2" x="-2.3876" y="-5.9944" drill="2.3368"/>
-<pad name="N3" x="-1.8796" y="-5.9944" drill="2.3368"/>
-<pad name="N4" x="-1.3716" y="-5.9944" drill="2.3368"/>
-<pad name="N5" x="-0.8636" y="-5.9944" drill="2.3368"/>
-<pad name="N6" x="-0.3556" y="-5.9944" drill="2.3368"/>
-<pad name="N10" x="2.286" y="-5.9944" drill="2.3368"/>
-<pad name="N9" x="1.778" y="-5.9944" drill="2.3368"/>
-<pad name="N8" x="1.27" y="-5.9944" drill="2.3368"/>
-<pad name="N7" x="0.762" y="-5.9944" drill="2.3368"/>
-<pad name="N12" x="0.254" y="-5.9944" drill="2.3368"/>
-<pad name="PHASE" x="0" y="5.9944" drill="2.3368" shape="long"/>
-<pad name="P12" x="2.794" y="5.9944" drill="2.3368"/>
-<rectangle x1="-2.794" y1="4.318" x2="2.794" y2="7.6708" layer="17"/>
-<pad name="P1" x="-2.794" y="5.9944" drill="2.3368"/>
-<pad name="P2" x="-2.3876" y="5.9944" drill="2.3368"/>
-<pad name="P3" x="-1.8796" y="5.9944" drill="2.3368"/>
-<pad name="P4" x="-1.3716" y="5.9944" drill="2.3368"/>
-<pad name="P5" x="-0.8636" y="5.9944" drill="2.3368"/>
-<pad name="P6" x="-0.3556" y="5.9944" drill="2.3368"/>
-<pad name="P11" x="2.286" y="5.9944" drill="2.3368"/>
-<pad name="P10" x="1.778" y="5.9944" drill="2.3368"/>
-<pad name="P9" x="1.27" y="5.9944" drill="2.3368"/>
-<pad name="P8" x="0.762" y="5.9944" drill="2.3368"/>
-<pad name="P7" x="0.254" y="5.9944" drill="2.3368"/>
 <hole x="11.938" y="0" drill="6.4262"/>
+<wire x1="-2.79" y1="7.1" x2="2.8" y2="7.1" width="0" layer="20"/>
+<wire x1="2.8" y1="7.1" x2="3.9" y2="6" width="0" layer="20" curve="-90"/>
+<wire x1="3.9" y1="6" x2="2.79" y2="4.89" width="0" layer="20" curve="-90"/>
+<wire x1="2.79" y1="4.89" x2="-2.79" y2="4.89" width="0" layer="20"/>
+<wire x1="-2.79" y1="4.89" x2="-3.9" y2="5.99" width="0" layer="20" curve="-90"/>
+<wire x1="-3.9" y1="5.99" x2="-2.79" y2="7.1" width="0" layer="20" curve="-90"/>
+<pad name="PHASE1" x="-2.79" y="5.995" drill="2.34" diameter="4"/>
+<pad name="PHASE2" x="2.79" y="5.995" drill="2.34" diameter="4"/>
+<polygon width="0" layer="17">
+<vertex x="-2.79" y="7.995"/>
+<vertex x="2.79" y="7.995"/>
+<vertex x="2.79" y="7.3"/>
+<vertex x="-2.79" y="7.3"/>
+</polygon>
+<polygon width="0" layer="17">
+<vertex x="-2.79" y="3.995"/>
+<vertex x="-2.79" y="4.7"/>
+<vertex x="2.79" y="4.7"/>
+<vertex x="2.79" y="3.995"/>
+</polygon>
+<polygon width="0" layer="29" spacing="0.04">
+<vertex x="-2.8" y="8.1"/>
+<vertex x="2.8" y="8.1"/>
+<vertex x="2.8" y="3.89"/>
+<vertex x="-2.8" y="3.89"/>
+</polygon>
+<polygon width="0" layer="30" spacing="0.05">
+<vertex x="-2.8" y="8.1"/>
+<vertex x="2.8" y="8.1"/>
+<vertex x="2.8" y="3.89"/>
+<vertex x="-2.8" y="3.89"/>
+</polygon>
+<wire x1="-2.79" y1="-4.89" x2="2.8" y2="-4.89" width="0" layer="20"/>
+<wire x1="2.8" y1="-4.89" x2="3.9" y2="-5.99" width="0" layer="20" curve="-90"/>
+<wire x1="3.9" y1="-5.99" x2="2.79" y2="-7.1" width="0" layer="20" curve="-90"/>
+<wire x1="2.79" y1="-7.1" x2="-2.79" y2="-7.1" width="0" layer="20"/>
+<wire x1="-2.79" y1="-7.1" x2="-3.9" y2="-6" width="0" layer="20" curve="-90"/>
+<wire x1="-3.9" y1="-6" x2="-2.79" y2="-4.89" width="0" layer="20" curve="-90"/>
+<pad name="NEUTRAL1" x="-2.79" y="-5.995" drill="2.34" diameter="4"/>
+<pad name="NEUTRAL2" x="2.79" y="-5.995" drill="2.34" diameter="4"/>
+<polygon width="0" layer="17">
+<vertex x="-2.79" y="-3.995"/>
+<vertex x="2.79" y="-3.995"/>
+<vertex x="2.79" y="-4.69"/>
+<vertex x="-2.79" y="-4.69"/>
+</polygon>
+<polygon width="0" layer="17">
+<vertex x="-2.79" y="-7.995"/>
+<vertex x="-2.79" y="-7.29"/>
+<vertex x="2.79" y="-7.29"/>
+<vertex x="2.79" y="-7.995"/>
+</polygon>
+<polygon width="0" layer="29" spacing="0.04">
+<vertex x="-2.8" y="-3.89"/>
+<vertex x="2.8" y="-3.89"/>
+<vertex x="2.8" y="-8.1"/>
+<vertex x="-2.8" y="-8.1"/>
+</polygon>
+<polygon width="0" layer="30" spacing="0.05">
+<vertex x="-2.8" y="-3.89"/>
+<vertex x="2.8" y="-3.89"/>
+<vertex x="2.8" y="-8.1"/>
+<vertex x="-2.8" y="-8.1"/>
+</polygon>
 </package>
 </packages>
 <symbols>
@@ -3191,7 +3227,7 @@ To use, set global attributes TITLE and REV in your schematic.</description>
 </device>
 </devices>
 </deviceset>
-<deviceset name="AC-PLUG-2" prefix="J">
+<deviceset name="AC-PLUG-2" prefix="J" uservalue="yes">
 <description>For use with Bud Industries Box: 377-1709-ND</description>
 <gates>
 <gate name="G$1" symbol="AC-PLUG-2" x="0" y="0"/>
@@ -3199,8 +3235,8 @@ To use, set global attributes TITLE and REV in your schematic.</description>
 <devices>
 <device name="" package="AC_MALE_PINS_2">
 <connects>
-<connect gate="G$1" pin="NEUTRAL" pad="N1 N2 N3 N4 N5 N6 N7 N8 N9 N10 N11 N12 NEUTRAL"/>
-<connect gate="G$1" pin="PHASE" pad="P1 P2 P3 P4 P5 P6 P7 P8 P9 P10 P11 P12 PHASE"/>
+<connect gate="G$1" pin="NEUTRAL" pad="NEUTRAL1 NEUTRAL2"/>
+<connect gate="G$1" pin="PHASE" pad="PHASE1 PHASE2"/>
 </connects>
 <technologies>
 <technology name=""/>
