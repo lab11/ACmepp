@@ -65,4 +65,11 @@ void ade_init() {
 	// Initialize SPI
 	spi_init();
 	CS_INIT();
+
+	// Set ADE Mode
+	SPI_WRITE(0x80 | ADEREG_MODE);
+	SPI_WRITE(ADEMODE_DISCF + ADEMODE_DISSAG);
+
+	// Set ADE Gains
+
 }
