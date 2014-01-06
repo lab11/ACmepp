@@ -67,6 +67,23 @@
 #define ADEMODE_DTRT_2		0x1000
 #define ADEMODE_DTRT_3		0x1800
 
+// ADE7753 Interrupt Registers
+#define ADEINT_AEHF			0x0001
+#define ADEINT_SAG			0x0002
+#define ADEINT_CYCEND		0x0004
+#define ADEINT_WSMP			0x0008
+#define ADEINT_ZX			0x0010
+#define ADEINT_TEMP			0x0020
+#define ADEINT_RESET		0x0040
+#define ADEINT_AEOF			0x0080
+#define ADEINT_PKV			0x0100
+#define ADEINT_PKI			0x0200
+#define ADEINT_VAEHF		0x0400
+#define ADEINT_VAEOF		0x0800
+#define ADEINT_ZXTO			0x1000
+#define ADEINT_PPOS			0x2000
+#define ADEINT_PNEG			0x4000
+
 extern unsigned char * ade_readReg(uint8_t addr, uint8_t len);
 extern void ade_setReg(uint8_t addr, uint32_t val, uint8_t len);
 extern void ade_init();
