@@ -1,3 +1,12 @@
+/*
+ *	ADE7753 Driver
+ *
+ *	Used for controlling the ADE7753 energy meter IC
+ *
+ *	Created On:	January 6, 2014
+ *		Author: Sam DeBruin
+ */
+
 #include <string.h>
 
 #include "contiki.h"
