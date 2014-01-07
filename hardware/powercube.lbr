@@ -1042,7 +1042,7 @@
 <pad name="P7" x="0.254" y="5.9944" drill="2.3368"/>
 </package>
 <package name="WIRE_HOLE-14AWG">
-<pad name="P$1" x="0" y="0" drill="2.54" diameter="2.667" shape="long"/>
+<pad name="P$1" x="0" y="0" drill="2.54" diameter="5.08" shape="octagon"/>
 </package>
 <package name="CD2320">
 <smd name="1" x="-2.05" y="-2.86" dx="1.1" dy="1.5" layer="1"/>

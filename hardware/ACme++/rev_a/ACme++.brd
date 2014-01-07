@@ -382,7 +382,7 @@ We've spent an enormous amount of time creating and checking these footprints an
 <text x="0" y="-3.175" size="1.016" layer="27" font="vector" ratio="12" align="bottom-center">&gt;VALUE</text>
 </package>
 <package name="WIRE_HOLE-14AWG">
-<pad name="P$1" x="0" y="0" drill="2.54" diameter="2.667" shape="long"/>
+<pad name="P$1" x="0" y="0" drill="2.54" diameter="5.08" shape="octagon"/>
 </package>
 <package name="DO214_TVS">
 <smd name="CATHODE" x="-2.1844" y="0" dx="2.0828" dy="1.778" layer="1"/>
@@ -3371,8 +3371,8 @@ This Sunstone Circuits 2 Layer .DRU has been set to cover our minimum requiremen
 <approved hash="4,16,8eafb240ae02e46c"/>
 <approved hash="4,16,00b1966bc4af51c8"/>
 <approved hash="4,16,0b6137164c934404"/>
-<approved hash="4,16,df35c62daf458f17"/>
 <approved hash="4,16,1a4d84a9ec471117"/>
+<approved hash="4,16,df35c62daf458f17"/>
 <approved hash="4,16,4c2bcdb9866d09e8"/>
 <approved hash="4,16,871b86ffc8ac89e9"/>
 <approved hash="4,16,d30d7ab035a6c974"/>
