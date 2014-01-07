@@ -2453,7 +2453,7 @@ To use, set global attributes TITLE and REV in your schematic.</description>
 <text x="0" y="-3.175" size="1.016" layer="27" font="vector" ratio="12" align="bottom-center">&gt;VALUE</text>
 </package>
 <package name="WIRE_HOLE-14AWG">
-<pad name="P$1" x="0" y="0" drill="2.286" shape="long"/>
+<pad name="P$1" x="0" y="0" drill="2.54" diameter="2.667" shape="long"/>
 </package>
 <package name="DO214_TVS">
 <smd name="CATHODE" x="-2.1844" y="0" dx="2.0828" dy="1.778" layer="1"/>

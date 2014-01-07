@@ -382,7 +382,7 @@ We've spent an enormous amount of time creating and checking these footprints an
 <text x="0" y="-3.175" size="1.016" layer="27" font="vector" ratio="12" align="bottom-center">&gt;VALUE</text>
 </package>
 <package name="WIRE_HOLE-14AWG">
-<pad name="P$1" x="0" y="0" drill="2.286" shape="long"/>
+<pad name="P$1" x="0" y="0" drill="2.54" diameter="2.667" shape="long"/>
 </package>
 <package name="DO214_TVS">
 <smd name="CATHODE" x="-2.1844" y="0" dx="2.0828" dy="1.778" layer="1"/>
@@ -948,7 +948,7 @@ We've spent an enormous amount of time creating and checking these footprints an
 <class number="1" name="ac phase" width="2.032" drill="1.524">
 </class>
 </classes>
-<designrules name="sunstone-2lyr_v1.0.0.3 *">
+<designrules name="sunstone-2lyr_v1.0.0.3">
 <description language="en">&lt;b&gt;EAGLE Design Rules for *2* Layer Designs (DS)&lt;/b&gt;
 &lt;p&gt;
 This Sunstone Circuits 2 Layer .DRU has been set to cover our minimum requirements for our double sided products. For questions, comments, suggestions, please contact Sunstone Customer Support: &lt;p&gt;&lt;b&gt;Email:&lt;/b&gt;  mailto:support@sunstone.com&lt;br&gt;&lt;b&gt;Phone:&lt;/b&gt; 800-228-8198.&lt;p&gt; v1.1Mod10/16/07~Layers-core reversal.Distance C/D.Restring%.Supply G%.&lt;p&gt; v1.2 Mod12/06/07~Distance C/D to 20mils.&lt;p&gt;v1.3Mod12/12/07~Supply/Annulus Value to 12.5mils&lt;p&gt;1/15/08 SSC-EAGLE-2Lyr_v1.0.0.3~For Release&lt;p&gt;10/3/08 Description Edit.&lt;p&gt;
@@ -1008,7 +1008,7 @@ This Sunstone Circuits 2 Layer .DRU has been set to cover our minimum requiremen
 <param name="mlMaxStopFrame" value="3mil"/>
 <param name="mlMinCreamFrame" value="0mil"/>
 <param name="mlMaxCreamFrame" value="0mil"/>
-<param name="mlViaStopLimit" value="100mil"/>
+<param name="mlViaStopLimit" value="0mil"/>
 <param name="srRoundness" value="0"/>
 <param name="srMinRoundness" value="0mil"/>
 <param name="srMaxRoundness" value="0mil"/>
@@ -3179,7 +3179,6 @@ This Sunstone Circuits 2 Layer .DRU has been set to cover our minimum requiremen
 <approved hash="2,20,d2331b198fb0ec3c"/>
 <approved hash="2,20,7803456d240e3221"/>
 <approved hash="2,20,7e9b971fe4182add"/>
-<approved hash="18,29,23a6534d364466b4"/>
 <approved hash="13,17,7c917e937e937c91"/>
 <approved hash="3,17,7c917e937e937c91"/>
 <approved hash="13,17,fb61f963f963fb61"/>
@@ -3246,27 +3245,28 @@ This Sunstone Circuits 2 Layer .DRU has been set to cover our minimum requiremen
 <approved hash="1,20,c704e244e2a5c7e5"/>
 <approved hash="1,20,c50424c427a2c662"/>
 <approved hash="1,20,c40421442126c466"/>
-<approved hash="18,29,3e2ea9b1993a91d9"/>
+<approved hash="18,29,23a6534d364466b4"/>
 <approved hash="18,29,3ab29060bd8c8822"/>
+<approved hash="18,29,3e2ea9b1993a91d9"/>
 <approved hash="18,29,c93abf5f3f5f493a"/>
 <approved hash="18,29,178ce6e166e2978f"/>
-<approved hash="18,29,e161158295816162"/>
 <approved hash="18,29,8d81f82a40a648aa"/>
-<approved hash="18,29,238c9cb8ce9eec52"/>
+<approved hash="18,29,e161158295816162"/>
 <approved hash="18,29,5b334188542a3635"/>
-<approved hash="18,29,800b05894a125268"/>
+<approved hash="18,29,238c9cb8ce9eec52"/>
 <approved hash="18,29,6077408855120d71"/>
+<approved hash="18,29,800b05894a125268"/>
 <approved hash="18,29,b1d0956acb71976f"/>
 <approved hash="18,29,9485c7528b032497"/>
 <approved hash="18,29,948df14e7d0e64ae"/>
 <approved hash="18,29,ff19a9bc29bc7f19"/>
 <approved hash="18,29,6c101889b788beb6"/>
-<approved hash="18,29,25aff3027303a5ae"/>
 <approved hash="18,29,d342006180605343"/>
+<approved hash="18,29,25aff3027303a5ae"/>
 <approved hash="18,29,69dfaa280a29c9de"/>
 <approved hash="18,29,4aed893de93c2aec"/>
-<approved hash="18,29,6d500b6c79696336"/>
 <approved hash="18,29,ed51b9680f6da717"/>
+<approved hash="18,29,6d500b6c79696336"/>
 <approved hash="18,29,8a94946aca49ac2b"/>
 <approved hash="18,29,89451add53fabccf"/>
 <approved hash="19,1,3dbecac2ce8339ff"/>
@@ -3363,22 +3363,22 @@ This Sunstone Circuits 2 Layer .DRU has been set to cover our minimum requiremen
 <approved hash="4,16,8eafb240ae02e46c"/>
 <approved hash="4,16,0ae8e6dbfa1515c8"/>
 <approved hash="4,16,1db0fd8bd97c9e10"/>
-<approved hash="4,16,1f7473a06eab6ec4"/>
-<approved hash="4,16,8eafb240ae02e46c"/>
-<approved hash="4,16,00b1966bc4af51c8"/>
-<approved hash="4,16,0b6137164c934404"/>
 <approved hash="4,16,5a413ca43bfb3af9"/>
 <approved hash="4,16,cd19f7fae950bc08"/>
 <approved hash="4,16,c429d2f9864ac9d9"/>
 <approved hash="4,16,c3887edb0272c577"/>
+<approved hash="4,16,1f7473a06eab6ec4"/>
+<approved hash="4,16,8eafb240ae02e46c"/>
+<approved hash="4,16,00b1966bc4af51c8"/>
+<approved hash="4,16,0b6137164c934404"/>
 <approved hash="4,16,df35c62daf458f17"/>
 <approved hash="4,16,1a4d84a9ec471117"/>
 <approved hash="4,16,4c2bcdb9866d09e8"/>
 <approved hash="4,16,871b86ffc8ac89e9"/>
-<approved hash="4,16,511db5c84bde2216"/>
-<approved hash="4,16,91d2223076bc94ed"/>
 <approved hash="4,16,d30d7ab035a6c974"/>
 <approved hash="4,16,8fa7e2880678a97f"/>
+<approved hash="4,16,91d2223076bc94ed"/>
+<approved hash="4,16,511db5c84bde2216"/>
 </errors>
 </board>
 </drawing>
