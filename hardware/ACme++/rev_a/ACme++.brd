@@ -168,7 +168,7 @@ CTRL</text>
 <text x="22.352" y="11.557" size="2.54" layer="21" font="fixed" align="center">+</text>
 <text x="22.86" y="11.049" size="2.54" layer="21" font="fixed" align="center">+</text>
 <text x="12.573" y="8.001" size="1.016" layer="21" font="vector" ratio="13">Brad Campbell</text>
-<text x="12.573" y="6.731" size="0.762" layer="21" font="vector" ratio="12">2014/01/03</text>
+<text x="12.573" y="6.731" size="0.762" layer="21" font="vector" ratio="12">2014/01/08</text>
 <text x="2.286" y="11.176" size="2.54" layer="21" font="fixed" ratio="12" align="center">A</text>
 <wire x1="0.889" y1="12.446" x2="0.889" y2="9.525" width="0.254" layer="21"/>
 <wire x1="0.889" y1="9.525" x2="3.683" y2="9.525" width="0.254" layer="21"/>
@@ -177,12 +177,14 @@ CTRL</text>
 <text x="63.881" y="26.924" size="1.27" layer="21" font="vector" ratio="12" rot="SR270" align="top-center">N</text>
 <text x="63.881" y="19.939" size="1.27" layer="21" font="vector" ratio="12" rot="SR270" align="top-center">P</text>
 <polygon width="0" layer="30" spacing="0.254">
-<vertex x="38.1" y="33.02"/>
-<vertex x="39.116" y="32.004"/>
-<vertex x="46.355" y="39.243"/>
+<vertex x="38.608" y="31.623"/>
+<vertex x="42.037" y="31.623"/>
+<vertex x="46.355" y="35.941"/>
 <vertex x="46.355" y="43.18"/>
 <vertex x="44.831" y="43.18"/>
-<vertex x="44.831" y="39.751"/>
+<vertex x="44.831" y="36.703"/>
+<vertex x="41.529" y="33.401"/>
+<vertex x="38.608" y="33.401"/>
 </polygon>
 <polygon width="0" layer="30" spacing="0.254">
 <vertex x="37.973" y="27.051"/>
@@ -205,10 +207,12 @@ CTRL</text>
 <polygon width="0" layer="32">
 <vertex x="44.831" y="43.18"/>
 <vertex x="46.355" y="43.18"/>
-<vertex x="46.355" y="39.243"/>
-<vertex x="39.116" y="32.004"/>
-<vertex x="38.1" y="33.02"/>
-<vertex x="44.831" y="39.751"/>
+<vertex x="46.355" y="35.941"/>
+<vertex x="42.037" y="31.623"/>
+<vertex x="38.608" y="31.623"/>
+<vertex x="38.608" y="33.401"/>
+<vertex x="41.529" y="33.401"/>
+<vertex x="44.831" y="36.703"/>
 </polygon>
 <text x="7.366" y="40.767" size="0.762" layer="21" font="vector" ratio="12" align="bottom-center">CLK</text>
 <text x="10.033" y="40.767" size="0.762" layer="21" font="vector" ratio="12" align="bottom-center">MI</text>
@@ -2392,8 +2396,9 @@ This Sunstone Circuits 2 Layer .DRU has been set to cover our minimum requiremen
 <signal name="LOAD_PHASE">
 <contactref element="J3" pad="P$1"/>
 <contactref element="K1" pad="1"/>
-<wire x1="38.608" y1="32.494" x2="45.593" y2="39.479" width="2.54" layer="16"/>
-<wire x1="45.593" y1="39.479" x2="45.593" y2="42.926" width="2.54" layer="16"/>
+<wire x1="38.608" y1="32.494" x2="41.765" y2="32.494" width="2.54" layer="16"/>
+<wire x1="41.765" y1="32.494" x2="45.593" y2="36.322" width="2.54" layer="16"/>
+<wire x1="45.593" y1="36.322" x2="45.593" y2="42.926" width="2.54" layer="16"/>
 </signal>
 <signal name="N$16">
 <contactref element="L3" pad="P$2"/>
