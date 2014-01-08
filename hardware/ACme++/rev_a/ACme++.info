@@ -1,4 +1,5 @@
 author: Brad Campbell
 rev: A
-description: AC Power Meter for plug loads.
+description: AC power MEter for plug loads based on the [ACme](http://acme.cs.berkeley.edu/) design. Uses a CC2538 instead of epic for wireless communication and remote control. Includes a solid state relay and an AC-DC power supply optimized for size.
 title: ACme++
+github: http://github.com/lab11/powercube
