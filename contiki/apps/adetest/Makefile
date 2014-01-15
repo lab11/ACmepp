@@ -5,5 +5,5 @@ TARGETDIRS += ../../platform
 
 all: $(CONTIKI_PROJECT)
 
-CONTIKI = ../../../../contiki
+CONTIKI = ../../../../../contiki
 include $(CONTIKI)/Makefile.include
