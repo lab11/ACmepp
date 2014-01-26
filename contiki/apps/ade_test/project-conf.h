@@ -38,7 +38,7 @@
 
 //#define CC2538_RF_CONF_TX_USE_DMA 0
 
-#define UIP_CONF_LOGGING 1
+#define UIP_CONF_LOGGING 0
 
 
 #define SICSLOWPAN_CONF_ADDR_CONTEXT_0 {addr_contexts[0].prefix[0]=0;addr_contexts[0].prefix[1]=0;}

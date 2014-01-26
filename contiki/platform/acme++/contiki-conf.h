@@ -1,9 +1,9 @@
 /**
- * \addtogroup cc2538
+ * \addtogroup acme++
  * @{
  *
  * \file
- *  Configuration for the cc2538dk platform
+ *  Configuration for the ACme++ platform
  */
 #ifndef CONTIKI_CONF_H_
 #define CONTIKI_CONF_H_
@@ -43,6 +43,24 @@ typedef uint32_t rtimer_clock_t;
 
 /*---------------------------------------------------------------------------*/
 /**
+ * \name ADE7753 configuration
+ *
+ * These values configure which CC2538 pins to use for the ADE chip.
+ * @{
+ */
+#define ADE7753_IRQ_N_PORT_NUM GPIO_B_NUM
+#define ADE7753_IRQ_N_PIN      1
+#define ADE7753_ZX_PORT_NUM    GPIO_B_NUM
+#define ADE7753_ZX_PIN         0
+#define ADE7753_CF_PORT_NUM    GPIO_C_NUM
+#define ADE7753_CF_PIN         7
+#define ADE7753_CS_N_PORT_NUM  GPIO_B_NUM
+#define ADE7753_CS_N_PIN       2
+/** @} */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/**
  * \name FM25LB configuration
  *
  * These values configure which CC2538 pins to use for the FRAM chip.
@@ -52,6 +70,8 @@ typedef uint32_t rtimer_clock_t;
 #define FM25LB_HOLD_N_PIN      1
 #define FM25LB_WP_N_PORT_NUM   GPIO_C_NUM
 #define FM25LB_WP_N_PIN        6
+#define FM25LB_CS_N_PORT_NUM   GPIO_C_NUM
+#define FM25LB_CS_N_PIN_NUM    5
 /** @} */
 /*---------------------------------------------------------------------------*/
 /**
@@ -60,28 +80,12 @@ typedef uint32_t rtimer_clock_t;
  * These values configure which CC2538 pins to use for the SPI lines.
  * @{
  */
-#define CC2538_SPI_CLK_PORT_NUM  GPIO_C_NUM
-#define CC2538_SPI_CLK_PIN_NUM   2
-#define CC2538_SPI_MOSI_PORT_NUM GPIO_C_NUM
-#define CC2538_SPI_MOSI_PIN_NUM  3
-#define CC2538_SPI_MISO_PORT_NUM GPIO_C_NUM
-#define CC2538_SPI_MISO_PIN_NUM  4
-#define CC2538_SPI_SEL_PORT_NUM  GPIO_C_NUM
-#define CC2538_SPI_SEL_PIN_NUM   5
-
-#define SPI_WAITFORTxREADY() do { \
-  while(!(REG(SSI0_BASE + SSI_O_SR) & SSI_SR_TNF)); \
-} while (0)
-
-#define SPI_TXBUF REG(SSI0_BASE + SSI_O_DR)
-#define SPI_RXBUF REG(SSI0_BASE + SSI_O_DR)
-
-#define SPI_WAITFOREOTx() do { \
-  while(REG(SSI0_BASE + SSI_O_SR) & SSI_SR_BSY); \
-} while (0)
-#define SPI_WAITFOREORx() do { \
-  while(!(REG(SSI0_BASE + SSI_O_SR) & SSI_SR_RNE)); \
-} while (0)
+#define SPI_CLK_PORT  GPIO_C_NUM
+#define SPI_CLK_PIN   2
+#define SPI_MOSI_PORT GPIO_C_NUM
+#define SPI_MOSI_PIN  3
+#define SPI_MISO_PORT GPIO_C_NUM
+#define SPI_MISO_PIN  4
 /** @} */
 /*---------------------------------------------------------------------------*/
 /**

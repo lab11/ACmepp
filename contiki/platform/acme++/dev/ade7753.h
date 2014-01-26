@@ -52,9 +52,9 @@
 
 // ADE7753 Mode Register
 #define ADEMODE_DISHPF		0x0001
-#define ADEMODE_DISLPF2		0x0002 
-#define ADEMODE_DISCF		0x0004 
-#define ADEMODE_DISSAG		0x0008 
+#define ADEMODE_DISLPF2		0x0002
+#define ADEMODE_DISCF		0x0004
+#define ADEMODE_DISSAG		0x0008
 #define ADEMODE_ASUSPEND	0x0010
 #define ADEMODE_TEMPSEL		0x0020
 #define ADEMODE_SWRST		0x0040
@@ -84,8 +84,10 @@
 #define ADEINT_PPOS			0x2000
 #define ADEINT_PNEG			0x4000
 
-extern unsigned char * ade_readReg(uint8_t addr, uint8_t len);
-extern void ade_setReg(uint8_t addr, uint32_t val, uint8_t len);
-extern void ade_init();
+void ade_init();
+void ade_configure_cs();
+unsigned char * ade_readReg(uint8_t addr, uint8_t len);
+void ade_setReg(uint8_t addr, uint32_t val, uint8_t len);
 
-#endif /* ADE7753_H */ 
+
+#endif /* ADE7753_H */
