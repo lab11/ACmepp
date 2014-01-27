@@ -55,7 +55,7 @@ fm25lb_read(uint16_t address, uint16_t len, uint8_t *buf)
   uint16_t index = 0;
   uint16_t current_address = address;
 
-  spi_configure_cs(FM25LB_CS_N_PORT_NUM, FM25LB_CS_N_PIN_NUM);
+  spi_configure_cs(FM25LB_CS_N_PORT_NUM, FM25LB_CS_N_PIN);
 
   /* Flush the RX FIFO to start */
   while (REG(SSI0_BASE + SSI_SR) & SSI_SR_RNE) {
@@ -116,7 +116,7 @@ fm25lb_write(uint16_t address, uint16_t len, uint8_t *buf)
 {
   uint16_t i;
 
-  spi_configure_cs(FM25LB_CS_N_PORT_NUM, FM25LB_CS_N_PIN_NUM);
+  spi_configure_cs(FM25LB_CS_N_PORT_NUM, FM25LB_CS_N_PIN);
 
   /* Send the WRITE ENABLE command to allow writing to the FRAM */
   SPI_WRITE(FM25LB_WRITE_ENABLE_COMMAND);

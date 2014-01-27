@@ -71,7 +71,7 @@ typedef uint32_t rtimer_clock_t;
 #define FM25LB_WP_N_PORT_NUM   GPIO_C_NUM
 #define FM25LB_WP_N_PIN        6
 #define FM25LB_CS_N_PORT_NUM   GPIO_C_NUM
-#define FM25LB_CS_N_PIN_NUM    5
+#define FM25LB_CS_N_PIN        5
 /** @} */
 /*---------------------------------------------------------------------------*/
 /**

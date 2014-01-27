@@ -68,6 +68,7 @@
 #include "lpm.h"
 #include "spi.h"
 #include "fm25lb.h"
+#include "ade7753.h"
 
 #include <stdint.h>
 #include <string.h>
@@ -93,9 +94,11 @@ main(void)
   lpm_init();
   rtimer_init();
   gpio_init();
+  leds_init();
 
   spi_init();
   fm25lb_init();
+  ade_init();
 
   process_init();
 
