@@ -134,7 +134,7 @@ PROCESS_THREAD(ipv6_process, ev, data)
   }
   udp_bind(client_conn, UIP_HTONS(3001));
 
-  etimer_set(&periodic_timer, 2*CLOCK_SECOND);
+  etimer_set(&periodic_timer, 10*CLOCK_SECOND);
 
   while(1) {
     PROCESS_YIELD();
