@@ -15,7 +15,7 @@
 #include "sys/rtimer.h"
 #include "dev/leds.h"
 #include "dev/uart.h"
-#include "dev/button-sensor.h"
+#include "dev/relay-button-sensor.h"
 #include "dev/watchdog.h"
 #include "dev/serial-line.h"
 #include "dev/sys-ctrl.h"
@@ -87,8 +87,17 @@ send_handler(process_event_t ev, process_data_t data)
   pkt_data.seq_no++;
 
   leds_toggle(LEDS_BLUE);
-  leds_toggle(LEDS_GREEN);
-  leds_toggle(LEDS_RED);
+
+
+
+  // control relay
+  if (pkt_data.seq_no & 0x1) {
+    GPIO_CLR_PIN(RELAY_CTRL_BASE, RELAY_CTRL_MASK);
+    leds_off(LEDS_RED);
+  } else {
+    GPIO_SET_PIN(RELAY_CTRL_BASE, RELAY_CTRL_MASK);
+    leds_on(LEDS_RED);
+  }
 
   uip_udp_packet_send(client_conn, (uint8_t*) &pkt_data, sizeof(pkt_data_t));
 
@@ -135,6 +144,8 @@ PROCESS_THREAD(ipv6_process, ev, data)
       etimer_restart(&periodic_timer);
     } else if (ev == tcpip_event) {
       recv_handler();
+    } else if (ev == sensors_event) {
+      leds_toggle(LEDS_GREEN);
     }
   }
 

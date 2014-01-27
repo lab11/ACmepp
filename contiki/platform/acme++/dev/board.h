@@ -31,27 +31,31 @@
 #undef LEDS_RED
 #undef LEDS_CONF_ALL
 
-#define LEDS_BLUE      16 /**< PB4 */
-#define LEDS_RED       64 /**< PA6 */
-#define LEDS_GREEN     128 /**< PA7 */
-#define LEDS_CONF_ALL  208
+#define LEDS_BLUE                16 /**< PB4 */
+#define LEDS_RED                 64 /**< PA6 */
+#define LEDS_GREEN               128 /**< PA7 */
+#define LEDS_CONF_ALL            208
 
 /* Notify various examples that we have LEDs */
 #define PLATFORM_HAS_LEDS        1
 
-#define LED_BLUE_BASE  GPIO_B_BASE
-#define LED_RED_BASE   GPIO_A_BASE
-#define LED_GREEN_BASE GPIO_A_BASE
-#define LED_BLUE_MASK  GPIO_PIN_MASK(4)
-#define LED_RED_MASK   GPIO_PIN_MASK(6)
-#define LED_GREEN_MASK GPIO_PIN_MASK(7)
+#define LED_BLUE_BASE            GPIO_B_BASE
+#define LED_RED_BASE             GPIO_A_BASE
+#define LED_GREEN_BASE           GPIO_A_BASE
+#define LED_BLUE_MASK            GPIO_PIN_MASK(4)
+#define LED_RED_MASK             GPIO_PIN_MASK(6)
+#define LED_GREEN_MASK           GPIO_PIN_MASK(7)
 /** @} */
 /*---------------------------------------------------------------------------*/
 /** \name GPIO
  *
  */
 #define RELAY_CTRL_BASE          GPIO_B_BASE
-#define RELAY_CTRL_MASK          GPIO_PIN_MASK(3)
+#define RELAY_CTRL_MASK          GPIO_PIN_MASK(5)
+
+#define RELAY_BUTTON_PORT        GPIO_B_NUM
+#define RELAY_BUTTON_PIN         3
+#define RELAY_BUTTON_VECTOR      NVIC_INT_GPIO_PORT_B
 /** @} */
 /*---------------------------------------------------------------------------*/
 /** \name USB configuration
