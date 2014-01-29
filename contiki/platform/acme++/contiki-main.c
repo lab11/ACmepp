@@ -99,7 +99,6 @@ main(void)
 
   spi_init();
   fm25lb_init();
-  ade_init();
 
   process_init();
 
