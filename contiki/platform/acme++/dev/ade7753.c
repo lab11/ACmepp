@@ -42,7 +42,7 @@ unsigned char* ade_readReg(uint8_t addr, uint8_t len) {
 
 void ade_setReg(uint8_t addr, uint32_t val, uint8_t len) {
 
-//	unsigned int i;
+	unsigned int i;
 
 	ade_configure_cs();
 
@@ -50,9 +50,9 @@ void ade_setReg(uint8_t addr, uint32_t val, uint8_t len) {
 	SPI_WRITE(0x80 | addr);	// MSB is 1 for write
 
 	// Send data to be written
-//	for(i = 0; i < len; i++) {
-		SPI_WRITE_FAST(val);
-//	}
+	for(i = len; i > 0; i--) {
+		SPI_WRITE_FAST(val >> (8*(i-1)));
+	}
 
 
 }
