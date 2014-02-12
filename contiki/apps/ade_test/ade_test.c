@@ -16,7 +16,7 @@ AUTOSTART_PROCESSES(&ade_test_process);
 /*---------------------------------------------------------------------------*/
 PROCESS_THREAD(ade_test_process, ev, data) {
 
-	unsigned int i;
+	//unsigned int i;
 
 	PROCESS_BEGIN();
 
@@ -28,7 +28,9 @@ PROCESS_THREAD(ade_test_process, ev, data) {
 		PROCESS_YIELD();
 		
 		if (etimer_expired(&periodic_timer)) {
-			ade_readReg(ADEREG_AENERGY, 3);
+			ade_setReg(ADEREG_MODE, 0x000C, 2);
+			ade_readReg(ADEREG_MODE, 2);
+			ade_readReg(ADEREG_TEMP, 1);
 			leds_toggle(LEDS_GREEN);
 			etimer_restart(&periodic_timer);
 		}
