@@ -77,7 +77,18 @@
 static void
 set_rime_addr()
 {
-  ieee_addr_cpy_to(&rimeaddr_node_addr.u8[0], RIMEADDR_SIZE);
+  ieee_addr_cpy_to(&linkaddr_node_addr.u8[0], LINKADDR_SIZE);
+
+#if STARTUP_CONF_VERBOSE
+  {
+    int i;
+    printf("Rime configured with address ");
+    for(i = 0; i < LINKADDR_SIZE - 1; i++) {
+      printf("%02x:", linkaddr_node_addr.u8[i]);
+    }
+    printf("%02x\n", linkaddr_node_addr.u8[i]);
+  }
+#endif
 }
 /*---------------------------------------------------------------------------*/
 /**
@@ -125,7 +136,7 @@ main(void)
   cc2538_rf_set_addr(IEEE802154_PANID);
 
 #if UIP_CONF_IPV6
-  memcpy(&uip_lladdr.addr, &rimeaddr_node_addr, sizeof(uip_lladdr.addr));
+  memcpy(&uip_lladdr.addr, &linkaddr_node_addr, sizeof(uip_lladdr.addr));
   queuebuf_init();
   process_start(&tcpip_process, NULL);
 #endif /* UIP_CONF_IPV6 */
