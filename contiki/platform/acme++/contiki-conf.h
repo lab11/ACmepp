@@ -160,6 +160,7 @@ typedef uint32_t rtimer_clock_t;
 #define SLIP_BRIDGE_CONF_NO_PUTCHAR 1
 #define SLIP_RADIO_CONF_NO_PUTCHAR  1
 
+#ifndef SLIP_ARCH_CONF_ENABLED
 /*
  * Determine whether we need SLIP
  * This will keep working while UIP_FALLBACK_INTERFACE and CMD_CONF_OUTPUT
@@ -167,6 +168,7 @@ typedef uint32_t rtimer_clock_t;
  */
 #if defined (UIP_FALLBACK_INTERFACE) || defined (CMD_CONF_OUTPUT)
 #define SLIP_ARCH_CONF_ENABLED      1
+#endif
 #endif
 
 /*
@@ -323,7 +325,7 @@ typedef uint32_t rtimer_clock_t;
  */
 /* RF Config */
 #ifndef IEEE802154_CONF_PANID
-#define IEEE802154_CONF_PANID           0x0022 /**< Default PAN ID: TI */
+#define IEEE802154_CONF_PANID           0x0022 /**< Default PAN ID: TinyOS */
 #endif
 
 #ifndef CC2538_RF_CONF_CHANNEL
@@ -357,7 +359,7 @@ typedef uint32_t rtimer_clock_t;
 #if UIP_CONF_IPV6
 /* Addresses, Sizes and Interfaces */
 /* 8-byte addresses here, 2 otherwise */
-#define RIMEADDR_CONF_SIZE                   8
+#define LINKADDR_CONF_SIZE                   8
 #define UIP_CONF_LL_802154                   1
 #define UIP_CONF_LLH_LEN                     0
 #define UIP_CONF_NETIF_MAX_ADDRESSES         3
@@ -366,7 +368,9 @@ typedef uint32_t rtimer_clock_t;
 #ifndef UIP_CONF_TCP
 #define UIP_CONF_TCP                         1
 #endif
+#ifndef UIP_CONF_TCP_MSS
 #define UIP_CONF_TCP_MSS                    64
+#endif
 #define UIP_CONF_UDP                         1
 #define UIP_CONF_UDP_CHECKSUMS               1
 #define UIP_CONF_ICMP6                       1
@@ -392,7 +396,7 @@ typedef uint32_t rtimer_clock_t;
 #define UIP_CONF_ND6_RETRANS_TIMER       10000
 
 #ifndef NBR_TABLE_CONF_MAX_NEIGHBORS
-#define NBR_TABLE_CONF_MAX_NEIGHBORS                20
+#define NBR_TABLE_CONF_MAX_NEIGHBORS        20
 #endif
 #ifndef UIP_CONF_MAX_ROUTES
 #define UIP_CONF_MAX_ROUTES                 20

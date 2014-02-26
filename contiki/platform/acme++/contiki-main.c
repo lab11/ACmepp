@@ -78,17 +78,6 @@ static void
 set_rime_addr()
 {
   ieee_addr_cpy_to(&linkaddr_node_addr.u8[0], LINKADDR_SIZE);
-
-#if STARTUP_CONF_VERBOSE
-  {
-    int i;
-    printf("Rime configured with address ");
-    for(i = 0; i < LINKADDR_SIZE - 1; i++) {
-      printf("%02x:", linkaddr_node_addr.u8[i]);
-    }
-    printf("%02x\n", linkaddr_node_addr.u8[i]);
-  }
-#endif
 }
 /*---------------------------------------------------------------------------*/
 /**
@@ -97,34 +86,43 @@ set_rime_addr()
 int
 main(void)
 {
-  ioc_init();
-  ioc_set_over(GPIO_A_NUM, 0, IOC_OVERRIDE_ANA);
   nvic_init();
+  ioc_init();
   sys_ctrl_init();
   clock_init();
   lpm_init();
   rtimer_init();
   gpio_init();
-  leds_init();
-  relay_button_sensor_init();
 
-  spi_init();
-  fm25lb_init();
+  leds_init();
 
   process_init();
 
   watchdog_init();
 
-//#if UART_CONF_ENABLE
-//  uart_init();
-//  uart_set_input(serial_line_input_byte);
-//#endif
-//  serial_line_init();
+  relay_button_sensor_init();
+
+  spi_init();
+  fm25lb_init();
+
+/*
+#if UART_CONF_ENABLE
+  uart_init();
+  uart_set_input(serial_line_input_byte);
+#endif
+
+#if USB_SERIAL_CONF_ENABLE
+  usb_serial_init();
+  usb_serial_set_input(serial_line_input_byte);
+#endif
+*/
+  serial_line_init();
+
 
   INTERRUPTS_ENABLE();
 
   /* Initialise the H/W RNG engine. */
-//  random_init(0);
+  random_init(0);
 
   udma_init();
 
