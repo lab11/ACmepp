@@ -1,4 +1,4 @@
-# sehnsor platform makefile
+# acme++ platform makefile
 
 ifndef CONTIKI
   $(error CONTIKI not defined! You must specify where CONTIKI resides!)

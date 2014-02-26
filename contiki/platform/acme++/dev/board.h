@@ -1,7 +1,7 @@
 /** \addtogroup cc2538
  * @{
  *
- * \defgroup sEHnsor
+ * \defgroup acme++
  *
  * \note   Do not include this file directly. It gets included by contiki-conf
  *         after all relevant directives have been set.
@@ -102,7 +102,7 @@
  * \name Device string used on startup
  * @{
  */
-#define BOARD_STRING "sEHnsor"
+#define BOARD_STRING "acme++"
 /** @} */
 
 #endif /* BOARD_H_ */

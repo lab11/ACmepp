@@ -92,7 +92,7 @@ set_rime_addr()
 }
 /*---------------------------------------------------------------------------*/
 /**
- * \brief Main routine for the cc2538dk platform
+ * \brief Main routine for the acme++ platform
  */
 int
 main(void)
