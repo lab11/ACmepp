@@ -9,7 +9,7 @@
 #define NETSTACK_CONF_RDC     nullrdc_driver
 
 // Shut the thing up
-#define STARTUP_CONF_VERBOSE 1
+#define STARTUP_CONF_VERBOSE 0
 //#define UART_CONF_ENABLE 0
 //#define CC2538_CONF_QUIET 1
 
@@ -22,7 +22,7 @@
 
 // Set the RF channel and panid
 #define IEEE802154_CONF_PANID 0x0022
-#define CC2538_RF_CONF_CHANNEL 19
+#define CC2538_RF_CONF_CHANNEL 21
 
 // Don't need TCP
 #define UIP_CONF_TCP 0
@@ -35,6 +35,7 @@
 // RPL
 #define UIP_CONF_IPV6_RPL 1
 #define RPL_CONF_OF rpl_of0
+//#define RPL_CONF_OF rpl_mrhof
 
 //#define CC2538_RF_CONF_TX_USE_DMA 0
 

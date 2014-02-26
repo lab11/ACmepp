@@ -26,7 +26,6 @@
 #include "net/ip/uiplib.h"
 #include "net/ipv6/uip-ds6-route.h"
 #include "net/ipv6/uip-ds6-nbr.h"
-
 #include <stdio.h>
 #include <stdint.h>
 /*---------------------------------------------------------------------------*/
@@ -39,7 +38,6 @@
 #define LEDS_RF_RX          (LEDS_YELLOW | LEDS_ORANGE)
 #define BROADCAST_CHANNEL   129
 /*---------------------------------------------------------------------------*/
-#define MACDEBUG 0
 
 #define DEBUG 1
 #if DEBUG
@@ -52,14 +50,11 @@
 #define PRINT6ADDR(addr)
 #endif
 
-#define UIP_IP_BUF   ((struct uip_ip_hdr *)&uip_buf[UIP_LLH_LEN])
-#define UIP_ICMP_BUF ((struct uip_icmp_hdr *)&uip_buf[uip_l2_l3_hdr_len])
 
-static uip_ipaddr_t my_addr;
 static uip_ipaddr_t dest_addr;
-static uip_ipaddr_t bcast_ipaddr;
+/*static uip_ipaddr_t bcast_ipaddr;
 static uip_lladdr_t bcast_lladdr = {{0, 0, 0, 0, 0, 0, 0, 0}};
-static struct uip_udp_conn *client_conn;
+static struct uip_udp_conn *client_conn;*/
 
 //pkt_data_t pkt_data = {PROFILE_ID, SEHNSOR_VERSION, 0, 0};
 
@@ -76,13 +71,13 @@ AUTOSTART_PROCESSES(&acme_switch);
 // Turn the plugged in load on
 static void load_on () {
   leds_on(LEDS_BLUE);
-///  GPIO_SET_PIN(RELAY_CTRL_BASE, RELAY_CTRL_MASK);
+  GPIO_SET_PIN(RELAY_CTRL_BASE, RELAY_CTRL_MASK);
 }
 
 // Turn the plugged in load off
 static void load_off () {
   leds_off(LEDS_BLUE);
-///  GPIO_CLR_PIN(RELAY_CTRL_BASE, RELAY_CTRL_MASK);
+  GPIO_CLR_PIN(RELAY_CTRL_BASE, RELAY_CTRL_MASK);
 }
 
 static void
@@ -120,8 +115,8 @@ static void periodic () {
 }
 
 
-/*---------------------------------------------------------------------------
-static void
+/*---------------------------------------------------------------------------*/
+/*static void
 send_handler(process_event_t ev, process_data_t data) {
   pkt_data.counter++;
   pkt_data.seq_no++;
@@ -139,8 +134,7 @@ send_handler(process_event_t ev, process_data_t data) {
     leds_on(LEDS_RED);
   }
 
-  uip_udp_packet_send(client_conn, (uint8_t*) &pkt_data, sizeof(pkt_data_t));
-
+  simple_udp_send(&udp_conn, (uint8_t*) &pkt_data, sizeof(pkt_data_t));
 }*/
 
 
@@ -150,15 +144,12 @@ PROCESS_THREAD(acme_switch, ev, data) {
 
   PROCESS_BEGIN();
 
-  leds_on(LEDS_GREEN);
+  leds_off(LEDS_GREEN);
+  leds_on(LEDS_RED);
+  leds_off(LEDS_BLUE);
 
 
-//// GPIO_SET_OUTPUT(RELAY_CTRL_BASE, RELAY_CTRL_MASK);
-
-  // Set the local address
-  uip_ip6addr(&my_addr, 0x2001, 0x0470, 0x1f11, 0x131a, 0, 0, 0, 0);
-  uip_ds6_set_addr_iid(&my_addr, &uip_lladdr);
-  uip_ds6_addr_add(&my_addr, 0, ADDR_MANUAL);
+  GPIO_SET_OUTPUT(RELAY_CTRL_BASE, RELAY_CTRL_MASK);
 
   // Setup the destination address
   uiplib_ipaddrconv(RECEIVER_ADDR, &dest_addr);
