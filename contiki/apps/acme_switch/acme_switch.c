@@ -95,6 +95,10 @@ receiver(struct simple_udp_connection *c,
 
   command = data[0];
 
+  simple_udp_sendto_port(&udp_conn,
+    (uint8_t*) "aaabbbcccdddeeefffggghhfdsafdafdsafdbfdabffdsafdsafdsafdsa", 1,
+    &dest_addr, UDP_REMOTE_PORT);
+
   switch (command) {
     case ACME_CMD_POWER_ON:
       load_on();
@@ -112,6 +116,10 @@ receiver(struct simple_udp_connection *c,
 
 static void periodic () {
   leds_toggle(LEDS_RED);
+
+  simple_udp_sendto_port(&udp_conn,
+    (uint8_t*) "aaabbbcccdddeeefffggghhfdsafdafdsafdbfdabffdsafdsafdsafdsa", 25,
+    &dest_addr, UDP_REMOTE_PORT);
 }
 
 
@@ -154,14 +162,8 @@ PROCESS_THREAD(acme_switch, ev, data) {
   // Setup the destination address
   uiplib_ipaddrconv(RECEIVER_ADDR, &dest_addr);
 
-  // Add a "neighbor" for our custom route
-  // Setup the default broadcast route
-//  uiplib_ipaddrconv(ADDR_ALL_ROUTERS, &bcast_ipaddr);
-//  uip_ds6_nbr_add(&bcast_ipaddr, &bcast_lladdr, 0, NBR_REACHABLE);
-//  uip_ds6_route_add(&dest_addr, 128, &bcast_ipaddr);
-
-  simple_udp_register(&udp_conn, UDP_LISTEN_PORT, NULL,
-    UDP_REMOTE_PORT, receiver);
+  // Register a simple UDP socket
+  simple_udp_register(&udp_conn, UDP_LISTEN_PORT, NULL, 0, receiver);
 
   etimer_set(&periodic_timer, 10*CLOCK_SECOND);
 

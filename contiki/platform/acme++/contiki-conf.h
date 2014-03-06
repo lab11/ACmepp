@@ -316,6 +316,15 @@ typedef uint32_t rtimer_clock_t;
 #ifndef IEEE_ADDR_CONF_ADDRESS
 #define IEEE_ADDR_CONF_ADDRESS { 0x00, 0x12, 0x4B, 0x00, 0x89, 0xAB, 0xCD, 0xEF }
 #endif
+
+/**
+ * \brief The location in memory to use for the IEEE address when
+ * IEEE_ADDR_CONF_HARDCODED is defined as 0
+ */
+#ifndef IEEE_ADDR_CONF_LOCATION
+#define IEEE_ADDR_CONF_LOCATION IEEE_ADDR_LOCATION_SECONDARY
+#endif
+
 /** @} */
 /*---------------------------------------------------------------------------*/
 /**
