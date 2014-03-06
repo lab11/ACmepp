@@ -5,3 +5,7 @@ obj_acme++/
 *.bin
 *.elf
 *.hex
+obj_*
+*.map
+*.a
+*.cc2538dk
