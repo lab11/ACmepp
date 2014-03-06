@@ -318,13 +318,14 @@ typedef uint32_t rtimer_clock_t;
 #endif
 
 /**
- * \brief The location in memory to use for the IEEE address when
+ * \brief Location of the IEEE address in the InfoPage when
  * IEEE_ADDR_CONF_HARDCODED is defined as 0
+ * 0 => Use the primary address location
+ * 1 => Use the secondary address location
  */
-#ifndef IEEE_ADDR_CONF_LOCATION
-#define IEEE_ADDR_CONF_LOCATION IEEE_ADDR_LOCATION_SECONDARY
+#ifndef IEEE_ADDR_CONF_USE_SECONDARY_LOCATION
+#define IEEE_ADDR_CONF_USE_SECONDARY_LOCATION 1
 #endif
-
 /** @} */
 /*---------------------------------------------------------------------------*/
 /**
