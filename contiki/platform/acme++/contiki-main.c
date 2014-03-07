@@ -50,7 +50,6 @@
 #include "dev/uart.h"
 #include "dev/watchdog.h"
 #include "dev/ioc.h"
-#include "dev/button-sensor.h"
 #include "dev/serial-line.h"
 #include "dev/slip.h"
 #include "dev/cc2538-rf.h"
@@ -69,6 +68,7 @@
 #include "spi.h"
 #include "fm25lb.h"
 #include "ade7753.h"
+#include "relay-button-sensor.h"
 
 #include <stdint.h>
 #include <string.h>

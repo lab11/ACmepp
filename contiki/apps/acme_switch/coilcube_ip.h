@@ -48,6 +48,18 @@ typedef enum {
 
 */
 
+#define MAGICID 0xBD30
+
+#define FRAM_ADDR_CONFIG 0
+
+typedef struct {
+  uint32_t magic_id;
+  uint8_t power_state;
+} fram_config_t;
+
+
+#define RELAY_OFF 0
+#define RELAY_ON  1
 
 #define ACME_CMD_POWER_ON  1
 #define ACME_CMD_POWER_OFF 2

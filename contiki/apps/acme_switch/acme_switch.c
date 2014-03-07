@@ -28,6 +28,8 @@
 #include "net/ipv6/uip-ds6-nbr.h"
 #include <stdio.h>
 #include <stdint.h>
+
+#include "fm25lb.h"
 /*---------------------------------------------------------------------------*/
 #define LOOP_INTERVAL       CLOCK_SECOND
 #define LEDS_OFF_HYSTERISIS (RTIMER_SECOND >> 1)
@@ -62,22 +64,39 @@ static struct etimer periodic_timer;
 
 static struct simple_udp_connection udp_conn;
 
+
+fram_config_t config;
+
+
 PROCESS(acme_switch, "ACme Switch");
 AUTOSTART_PROCESSES(&acme_switch);
 
 
-
+// Write the config struct back to the FRAM
+static void write_config () {
+  fm25lb_write(FRAM_ADDR_CONFIG, sizeof(fram_config_t), (uint8_t*) &config);
+}
 
 // Turn the plugged in load on
 static void load_on () {
   leds_on(LEDS_BLUE);
   GPIO_SET_PIN(RELAY_CTRL_BASE, RELAY_CTRL_MASK);
+  config.power_state = RELAY_ON;
+  write_config();
 }
 
 // Turn the plugged in load off
 static void load_off () {
   leds_off(LEDS_BLUE);
   GPIO_CLR_PIN(RELAY_CTRL_BASE, RELAY_CTRL_MASK);
+  config.power_state = RELAY_OFF;
+  write_config();
+}
+
+// Turn the plugged load to the given power state
+static void load_set (uint8_t on_off) {
+  if (on_off == RELAY_ON) load_on();
+  else if (on_off == RELAY_OFF) load_off();
 }
 
 static void
@@ -152,12 +171,23 @@ PROCESS_THREAD(acme_switch, ev, data) {
 
   PROCESS_BEGIN();
 
-  leds_off(LEDS_GREEN);
-  leds_on(LEDS_RED);
-  leds_off(LEDS_BLUE);
+  leds_off(LEDS_ALL);
 
+  // Read the FRAM
+  fm25lb_read(FRAM_ADDR_CONFIG, sizeof(fram_config_t), (uint8_t*) &config);
 
+  // Check if this is the first boot or not
+  if (config.magic_id != MAGICID) {
+    // First boot
+    config.magic_id = MAGICID;
+    config.power_state = RELAY_OFF;
+    write_config();
+  }
+
+  // Configure the pin that sets the relay to be an output pin
   GPIO_SET_OUTPUT(RELAY_CTRL_BASE, RELAY_CTRL_MASK);
+  // Put the load into its previous state
+  load_set(config.power_state);
 
   // Setup the destination address
   uiplib_ipaddrconv(RECEIVER_ADDR, &dest_addr);
