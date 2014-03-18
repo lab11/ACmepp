@@ -84,10 +84,10 @@
 #define ADEINT_PPOS			0x2000
 #define ADEINT_PNEG			0x4000
 
-void ade_init();
-void ade_configure_cs();
-unsigned char * ade_readReg(uint8_t addr, uint8_t len);
-void ade_setReg(uint8_t addr, uint32_t val, uint8_t len);
+void ade7753_init();
+void ade7753_configure_mode();
+uint32_t ade7753_readReg(uint8_t addr);
+void ade7753_setReg(uint8_t addr, uint32_t val);
 
 
 #endif /* ADE7753_H */
