@@ -35,6 +35,8 @@ fm25lb_init()
                GPIO_PIN_MASK(FM25LB_HOLD_N_PIN));
   GPIO_SET_PIN(GPIO_PORT_TO_BASE(FM25LB_WP_N_PORT_NUM),
                GPIO_PIN_MASK(FM25LB_WP_N_PIN));
+
+  spi_cs_init(FM25LB_CS_N_PORT_NUM, FM25LB_CS_N_PIN);
 }
 
 /**
@@ -50,54 +52,26 @@ int
 fm25lb_read(uint16_t address, uint16_t len, uint8_t *buf)
 {
   uint16_t i;
-  uint16_t c;
-  uint16_t cycles = (len / 6) + 1;
-  uint16_t index = 0;
+ // uint16_t c;
+ // uint16_t cycles = (len / 6) + 1;
+ // uint16_t index = 0;
   uint16_t current_address = address;
 
-  spi_configure_cs(FM25LB_CS_N_PORT_NUM, FM25LB_CS_N_PIN);
+  spi_set_mode(SSI_CR0_FRF_MOTOROLA, SSI_CR0_SPO, SSI_CR0_SPH, 8);
 
-  /* Flush the RX FIFO to start */
-  while (REG(SSI0_BASE + SSI_SR) & SSI_SR_RNE) {
-    SPI_RXBUF;
+  SPI_CS_CLR(FM25LB_CS_N_PORT_NUM, FM25LB_CS_N_PIN);
+
+  /* Send the READ command and the address to the FRAM */
+  SPI_WRITE(FM25LB_ADD_ADDRESS_BIT(current_address, FM25LB_READ_COMMAND));
+  SPI_WRITE(current_address & 0xFF);
+
+  SPI_FLUSH();
+
+  for (i=0; i<len; i++) {
+    SPI_READ(buf[i]);
   }
 
-  /* Read 6 bytes in at a time.
-   * This allows us to use the 8 slots in the RX FIFO. Any sort of delay
-   * when transmitting causes the CS_N line to go back high, ending our
-   * transaction with the FM25LB. */
-  for (c=0; c<cycles; c++) {
-    uint16_t reads_this_cycle = 6;
-
-    /* Don't read the full 6 bytes on the last portion */
-    if (c*6 + 6 > len) {
-      reads_this_cycle = len - c*6;
-    }
-
-    /* Send the READ command and the address to the FRAM */
-    SPI_WRITE_FAST(FM25LB_ADD_ADDRESS_BIT(current_address, FM25LB_READ_COMMAND));
-    SPI_WRITE_FAST(current_address & 0xFF);
-
-    /* Write 0s so the chip can respond with the data */
-    for(i=0; i<reads_this_cycle; i++) {
-      SPI_WRITE_FAST(0);
-    }
-    SPI_WAITFOREOTx();
-
-    /* Copy from the RX FIFO. Skip the invalid bytes from when we sent the
-     * command. */
-    i=0;
-    while (REG(SSI0_BASE + SSI_SR) & SSI_SR_RNE) {
-      if (i < 2) {
-        SPI_RXBUF;
-      } else {
-        buf[index++] = (uint16_t) SPI_RXBUF;
-      }
-      i++;
-    }
-
-    current_address += 6;
-  }
+  SPI_CS_SET(FM25LB_CS_N_PORT_NUM, FM25LB_CS_N_PIN);
 
   return 0;
 }
@@ -116,31 +90,27 @@ fm25lb_write(uint16_t address, uint16_t len, uint8_t *buf)
 {
   uint16_t i;
 
-  spi_configure_cs(FM25LB_CS_N_PORT_NUM, FM25LB_CS_N_PIN);
+  spi_set_mode(SSI_CR0_FRF_MOTOROLA, SSI_CR0_SPO, SSI_CR0_SPH, 8);
+
+
+  SPI_CS_CLR(FM25LB_CS_N_PORT_NUM, FM25LB_CS_N_PIN);
 
   /* Send the WRITE ENABLE command to allow writing to the FRAM */
   SPI_WRITE(FM25LB_WRITE_ENABLE_COMMAND);
 
-  /* Clear the RX FIFO so that CS_N will go back high so we can write a new
-   * command. */
-  while (REG(SSI0_BASE + SSI_SR) & SSI_SR_RNE) {
-    SPI_RXBUF;
-  }
+  SPI_CS_SET(FM25LB_CS_N_PORT_NUM, FM25LB_CS_N_PIN);
+  SPI_CS_CLR(FM25LB_CS_N_PORT_NUM, FM25LB_CS_N_PIN);
 
   /* Send the WRITE command and the address to the FRAM */
-  SPI_WRITE_FAST(FM25LB_ADD_ADDRESS_BIT(address, FM25LB_WRITE_COMMAND));
-  SPI_WRITE_FAST(address & 0xFF);
+  SPI_WRITE(FM25LB_ADD_ADDRESS_BIT(address, FM25LB_WRITE_COMMAND));
+  SPI_WRITE(address & 0xFF);
 
   /* Send the data to write */
   for(i=0; i<len; i++) {
-    SPI_WRITE_FAST(buf[i]);
+    SPI_WRITE(buf[i]);
   }
-  SPI_WAITFOREOTx();
 
-  /* Flush anything read while sending the write */
-  while (REG(SSI0_BASE + SSI_SR) & SSI_SR_RNE) {
-    SPI_RXBUF;
-  }
+  SPI_CS_SET(FM25LB_CS_N_PORT_NUM, FM25LB_CS_N_PIN);
 
   return 0;
 }
