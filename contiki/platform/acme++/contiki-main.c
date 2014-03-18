@@ -65,6 +65,7 @@
 #include "reg.h"
 #include "ieee-addr.h"
 #include "lpm.h"
+#include "spi-arch.h"
 #include "spi.h"
 #include "fm25lb.h"
 #include "ade7753.h"
@@ -95,6 +96,7 @@ main(void)
   gpio_init();
 
   leds_init();
+  leds_on(LEDS_ALL);
 
   process_init();
 
@@ -104,6 +106,7 @@ main(void)
 
   spi_init();
   fm25lb_init();
+  ade7753_init();
 
 /*
 #if UART_CONF_ENABLE
