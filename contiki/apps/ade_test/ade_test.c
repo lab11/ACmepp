@@ -20,7 +20,7 @@ PROCESS_THREAD(ade_test_process, ev, data) {
 
 	PROCESS_BEGIN();
 
-	ade_init();
+	ade7753_init();
 
 	etimer_set(&periodic_timer, CLOCK_SECOND);
 
@@ -28,9 +28,9 @@ PROCESS_THREAD(ade_test_process, ev, data) {
 		PROCESS_YIELD();
 		
 		if (etimer_expired(&periodic_timer)) {
-			ade_setReg(ADEREG_MODE, 0x000C, 2);
-			ade_readReg(ADEREG_MODE, 2);
-			ade_readReg(ADEREG_TEMP, 1);
+			ade7753_setReg(ADEREG_MODE, 0x000C);
+			ade7753_readReg(ADEREG_MODE);
+			ade7753_readReg(ADEREG_TEMP);
 			leds_toggle(LEDS_GREEN);
 			etimer_restart(&periodic_timer);
 		}

@@ -1,16 +1,15 @@
-/* Project configuration for the simple app where a packet is sent on wakeup
- * or periodically.
+#ifndef PROJECT_CONF_H_
+#define PROJECT_CONF_H_
+
+/*
  *
  * @author: Brad Campbell <bradjc@umich.edu>
  */
 
-#ifndef PROJECT_CONF_H_
-#define PROJECT_CONF_H_
-
 #define NETSTACK_CONF_RDC     nullrdc_driver
 
 // Shut the thing up
-//#define STARTUP_CONF_VERBOSE 0
+#define STARTUP_CONF_VERBOSE 0
 //#define UART_CONF_ENABLE 0
 //#define CC2538_CONF_QUIET 1
 
@@ -23,25 +22,26 @@
 
 // Set the RF channel and panid
 #define IEEE802154_CONF_PANID 0x0022
-#define CC2538_RF_CONF_CHANNEL 18
+#define CC2538_RF_CONF_CHANNEL 21
 
 // Don't need TCP
 #define UIP_CONF_TCP 0
 #define UIP_CONF_UDP 1
 
-// Not a router, no rpl
+// A router
 #define UIP_CONF_ROUTER 1
-#define UIP_CONF_IPV6_RPL 0
 
-#define SICSLOWPAN_CONF_COMPRESSION_THRESHOLD 10
-#define UIP_CONF_ND6_SEND_NA 0
+
+// RPL
+#define UIP_CONF_IPV6_RPL 1
+#define RPL_CONF_OF rpl_of0
+//#define RPL_CONF_OF rpl_mrhof
 
 //#define CC2538_RF_CONF_TX_USE_DMA 0
 
 #define UIP_CONF_LOGGING 0
 
 
-#define SICSLOWPAN_CONF_ADDR_CONTEXT_0 {addr_contexts[0].prefix[0]=0;addr_contexts[0].prefix[1]=0;}
 
 
 
