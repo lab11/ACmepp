@@ -11,8 +11,8 @@
 
 #include "contiki.h"
 #include "ade7753.h"
-#include "spi.h"
 #include "spi-arch.h"
+#include "spi.h"
 
 
 uint8_t ADE7753_REG_LENGTHS[ADEREG_DIEREV+1] = { 0, 24, 24, 24, 24, 24, 24, 24,
@@ -24,6 +24,24 @@ uint8_t ADE7753_REG_LENGTHS[ADEREG_DIEREV+1] = { 0, 24, 24, 24, 24, 24, 24, 24,
                                                  0,  0,  0,  0,  0,  0,  0,  0,
                                                  0,  0,  0,  0,  0,  8,  6,  8};
 
+
+/* Returns max voltage in millivolts */
+uint32_t ade7753_getMaxVoltage() {
+	uint32_t voltage_adc;
+	uint64_t millivolts;
+
+
+	voltage_adc = ade7753_readReg(ADEREG_RSTVPEAK);
+
+
+	/* equation: ((((ADC/2)/MAX_ADC) * MAX_ADC_MV) * VOLTAGE_SCALER) / FILTER_ADJ
+	 *           ((((ADC/2)/10322) * 500) * 500) / 0.919
+	 *           (ADC * 62500000) / 4742959
+	 */
+	millivolts = (62500000 * (uint64_t) voltage_adc) / 4742959;
+
+	return (uint32_t) millivolts;
+}
 
 
 void ade7753_configure_mode() {
@@ -88,6 +106,7 @@ void ade7753_init() {
 	ade7753_configure_mode();
 
 	spi_cs_init(ADE7753_CS_N_PORT_NUM, ADE7753_CS_N_PIN);
+
 	SPI_CS_CLR(ADE7753_CS_N_PORT_NUM, ADE7753_CS_N_PIN);
 
 	// Set ADE Mode
@@ -95,9 +114,13 @@ void ade7753_init() {
 	SPI_WRITE((ADEMODE_DISCF + ADEMODE_DISSAG + ADEMODE_TEMPSEL) >> 8);
 	SPI_WRITE(0xFF & (ADEMODE_DISCF + ADEMODE_DISSAG + ADEMODE_TEMPSEL));
 
+
+
 	// Set ADE Gains
 
 
 	SPI_CS_SET(ADE7753_CS_N_PORT_NUM, ADE7753_CS_N_PIN);
+
+
 
 }

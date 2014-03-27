@@ -10,7 +10,6 @@
 
 #include <stdint.h>
 #include <string.h>
-#include "spi-arch.h"
 /*---------------------------------------------------------------------------*/
 /* Include Project Specific conf */
 #ifdef PROJECT_CONF_H

@@ -89,5 +89,7 @@ void ade7753_configure_mode();
 uint32_t ade7753_readReg(uint8_t addr);
 void ade7753_setReg(uint8_t addr, uint32_t val);
 
+uint32_t ade7753_getMaxVoltage();
+
 
 #endif /* ADE7753_H */
