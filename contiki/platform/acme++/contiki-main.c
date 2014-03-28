@@ -70,6 +70,7 @@
 #include "fm25lb.h"
 #include "ade7753.h"
 #include "relay-button-sensor.h"
+#include "mac_timer.h"
 
 #include <stdint.h>
 #include <string.h>
@@ -141,6 +142,9 @@ main(void)
   queuebuf_init();
   process_start(&tcpip_process, NULL);
 #endif /* UIP_CONF_IPV6 */
+
+
+  mac_timer_init();
 
   process_start(&sensors_process, NULL);
 

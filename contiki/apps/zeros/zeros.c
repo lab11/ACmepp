@@ -31,7 +31,7 @@
 #include "dev/nvic.h"
 #include "dev/ioc.h"
 #include "dev/relay-button-sensor.h"
-#include "rfcore-sfr.h"
+#include "dev/mac_timer.h"
 
 #include "fm25lb.h"
 #include "ade7753.h"
@@ -71,6 +71,12 @@ static struct simple_udp_connection udp_conn;
 
 
 fram_config_t config;
+
+uint32_t zero_crossing_time;
+uint32_t last_zero_crossing_time;
+uint32_t zc_diff;
+uint32_t zero_crossing_over;
+uint32_t zero_crossing_over_last;
 
 
 PROCESS(acme_switch, "Zeroes");
@@ -144,34 +150,56 @@ receiver(struct simple_udp_connection *c,
 
 
 static void periodic () {
- // leds_toggle(LEDS_RED);
-  static uint16_t last_sfd_cap = 0;
-  uint16_t sfd_cap;
 
-  struct {
+
+/*  struct {
     uint16_t period;
     uint8_t die;
     uint32_t energy;
     uint32_t vpeak;
+    uint32_t timelast;
     uint16_t k;
     uint16_t sfdcap;
     uint16_t chksum_balance;
+  } __attribute__ ((__packed__)) pktdata;*/
+
+  struct {
+    uint32_t emtpy1;
+    uint32_t emtpy2;
+    uint32_t vpeak;              // max voltage of AC waveform
+    uint32_t ticks_since_rising; // time from rising zero-crossing of AC signal to SFD
+    uint16_t chksum_balance;     // 16 bits to compensate for checksum
+    uint8_t  ending;             // Magic byte to identify these packets
   } __attribute__ ((__packed__)) pktdata;
 
-  pktdata.period = uip_htons((uint16_t) ade7753_readReg(ADEREG_PERIOD));
+  pktdata.emtpy1             = (uint32_t) zero_crossing_time;
+  pktdata.emtpy2             = 0;
+  pktdata.vpeak              = uip_htonl(ade7753_getMaxVoltage());
+  pktdata.ticks_since_rising = 0; // set to zero for now
+  pktdata.chksum_balance     = 0;
+  pktdata.ending             = 0xF0;
+
+/*  pktdata.period = uip_htons((uint16_t) ade7753_readReg(ADEREG_PERIOD));
+  //pktdata.period = uip_htons(zc_diff);
   pktdata.die    = (uint8_t)  ade7753_readReg(ADEREG_DIEREV);
-  pktdata.energy = uip_htonl(ade7753_readReg(ADEREG_AENERGY));
-  pktdata.vpeak  = uip_htonl(ade7753_getMaxVoltage());
+ // pktdata.energy = uip_htonl(ade7753_readReg(ADEREG_AENERGY));
+  //pktdata.energy = uip_htonl(zc_diff);
+  pktdata.energy = uip_htonl(zero_crossing_over);
+ // pktdata.vpeak  = uip_htonl(ade7753_getMaxVoltage());
+  pktdata.vpeak  = uip_htonl(zero_crossing_time);
+  pktdata.timelast  = uip_htonl(zero_crossing_over_last);
   //pktdata.k      = uip_htons(0xaabb);
   pktdata.k      = 0;
   pktdata.chksum_balance = 0;
 
-  sfd_cap = ((REG(RFCORE_SFR_MTM1) & 0xFF) << 8) | (REG(RFCORE_SFR_MTM0) & 0xFF);
+  pktdata.ending = 0xF0; // put this at the end so we know its our packet
+
+//  sfd_cap = ((REG(RFCORE_SFR_MTM1) & 0xFF) << 8) | (REG(RFCORE_SFR_MTM0) & 0xFF);
   pktdata.sfdcap = uip_htons(sfd_cap - last_sfd_cap);
 
   last_sfd_cap = sfd_cap;
-
-  leds_toggle(LEDS_RED);
+*/
+ // leds_toggle(LEDS_RED);
   simple_udp_sendto_port(&udp_conn,
     (uint8_t*) &pktdata, sizeof(pktdata),
     &dest_addr, 2333);
@@ -201,11 +229,12 @@ send_handler(process_event_t ev, process_data_t data) {
 }*/
 
 void zero_int (uint8_t port, uint8_t pin) {
-  static int c = 0;
-  c++;
-//  if (!(c % 60)) {
-//    leds_toggle(LEDS_RED);
-//  }
+  zero_crossing_time = mac_timer_get();
+  leds_toggle(LEDS_RED);
+}
+
+uint64_t get_zero_crossing () {
+  return zero_crossing_time;
 }
 
 
@@ -236,7 +265,8 @@ PROCESS_THREAD(acme_switch, ev, data) {
   GPIO_SOFTWARE_CONTROL(GPIO_B_BASE, GPIO_PIN_MASK(0));
   GPIO_SET_INPUT(GPIO_B_BASE, GPIO_PIN_MASK(0));
   GPIO_DETECT_EDGE(GPIO_B_BASE, GPIO_PIN_MASK(0));
-  GPIO_TRIGGER_BOTH_EDGES(GPIO_B_BASE, GPIO_PIN_MASK(0));
+  GPIO_TRIGGER_SINGLE_EDGE(GPIO_B_BASE, GPIO_PIN_MASK(0));
+  GPIO_DETECT_RISING(GPIO_B_BASE, GPIO_PIN_MASK(0));
   GPIO_ENABLE_INTERRUPT(GPIO_B_BASE, GPIO_PIN_MASK(0));
   ioc_set_over(GPIO_B_NUM, 0, IOC_OVERRIDE_DIS);
   nvic_interrupt_enable(NVIC_INT_GPIO_PORT_B);
@@ -248,10 +278,7 @@ PROCESS_THREAD(acme_switch, ev, data) {
   ade7753_readReg(ADEREG_DIEREV);
   ade7753_readReg(ADEREG_VPEAK);
 
-  // start the MAC timer
-  REG(RFCORE_SFR_MTCTRL) = RFCORE_SFR_MTCTRL_RUN;
-  // select that we want to read the capture value
-  REG(RFCORE_SFR_MTMSEL) = (REG(RFCORE_SFR_MTMSEL) & ~RFCORE_SFR_MTMSEL_MTMSEL) | 1;
+
 
   // Setup the destination address
   uiplib_ipaddrconv(RECEIVER_ADDR, &dest_addr);
