@@ -10,8 +10,8 @@
 
 // Shut the thing up
 #define STARTUP_CONF_VERBOSE 0
-//#define UART_CONF_ENABLE 0
-//#define CC2538_CONF_QUIET 1
+#define UART_CONF_ENABLE 0
+#define CC2538_CONF_QUIET 1
 
 // IPv6 love
 #define UIP_CONF_IPV6 1
@@ -41,7 +41,7 @@
 
 #define UIP_CONF_LOGGING 0
 
-
+#define SICSLOWPAN_CONF_COMPRESSION_THRESHOLD 43
 
 
 

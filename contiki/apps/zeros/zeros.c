@@ -68,6 +68,7 @@ static struct uip_udp_conn *client_conn;*/
 static struct etimer periodic_timer;
 
 static struct simple_udp_connection udp_conn;
+static struct simple_udp_connection udp_conn_cc;
 
 
 fram_config_t config;
@@ -132,7 +133,7 @@ receiver(struct simple_udp_connection *c,
 
   simple_udp_sendto_port(&udp_conn,
     (uint8_t*) "aaabbbcccdddeeefffggghhfdsafdafdsafdbfdabffdsafdsafdsafdsa", 1,
-    &dest_addr, UDP_REMOTE_PORT);
+    sender_addr, UDP_PORT_VIRT_VOLT);
 
   switch (command) {
     case ACME_CMD_POWER_ON:
@@ -146,6 +147,51 @@ receiver(struct simple_udp_connection *c,
     default:
       break;
   }
+}
+
+static void
+cc_receiver(struct simple_udp_connection *c,
+         const uip_ipaddr_t *sender_addr,
+         uint16_t sender_port,
+         const uip_ipaddr_t *receiver_addr,
+         uint16_t receiver_port,
+         const uint8_t *data,
+         uint16_t datalen) {
+
+
+  leds_toggle(LEDS_BLUE);
+
+  uip_lladdr_t new_neighbor_ll;
+  uip_ipaddr_t s_addr;
+  uip_ds6_route_t* r;
+
+  memset(s_addr.u8, 0, 16);
+  memcpy(s_addr.u8+8, sender_addr->u8+8, 8);
+
+  // Add a "neighbor" for our custom route
+  // Setup the default broadcast route
+  //uiplib_ipaddrconv(ADDR_ALL_ROUTERS, &bcast_ipaddr);
+  memcpy(new_neighbor_ll.addr, sender_addr->u8+8, 8);
+  new_neighbor_ll.addr[0] ^= 0x02;
+  uip_ds6_nbr_add(&s_addr, &new_neighbor_ll, 0, NBR_REACHABLE);
+  r = uip_ds6_route_add(&s_addr, 128, &s_addr);
+
+  if (r == NULL) {
+    leds_toggle(LEDS_RED);
+  }
+
+  voltage_data_t pkt;
+
+  pkt.vpeak              = uip_htonl(ade7753_getMaxVoltage());
+  pkt.ticks_since_rising = 0; // set to zero for now
+  pkt.chksum_balance     = 0;
+  pkt.ending             = 0xF0;
+
+  simple_udp_sendto_port(&udp_conn_cc,
+                         (uint8_t*) &pkt,
+                         sizeof(voltage_data_t),
+                         &s_addr,
+                         UDP_PORT_VIRT_VOLT);
 }
 
 
@@ -163,21 +209,8 @@ static void periodic () {
     uint16_t chksum_balance;
   } __attribute__ ((__packed__)) pktdata;*/
 
-  struct {
-    uint32_t emtpy1;
-    uint32_t emtpy2;
-    uint32_t vpeak;              // max voltage of AC waveform
-    uint32_t ticks_since_rising; // time from rising zero-crossing of AC signal to SFD
-    uint16_t chksum_balance;     // 16 bits to compensate for checksum
-    uint8_t  ending;             // Magic byte to identify these packets
-  } __attribute__ ((__packed__)) pktdata;
 
-  pktdata.emtpy1             = (uint32_t) zero_crossing_time;
-  pktdata.emtpy2             = 0;
-  pktdata.vpeak              = uip_htonl(ade7753_getMaxVoltage());
-  pktdata.ticks_since_rising = 0; // set to zero for now
-  pktdata.chksum_balance     = 0;
-  pktdata.ending             = 0xF0;
+
 
 /*  pktdata.period = uip_htons((uint16_t) ade7753_readReg(ADEREG_PERIOD));
   //pktdata.period = uip_htons(zc_diff);
@@ -200,9 +233,9 @@ static void periodic () {
   last_sfd_cap = sfd_cap;
 */
  // leds_toggle(LEDS_RED);
-  simple_udp_sendto_port(&udp_conn,
-    (uint8_t*) &pktdata, sizeof(pktdata),
-    &dest_addr, 2333);
+//  simple_udp_sendto_port(&udp_conn,
+//    (uint8_t*) &pktdata, sizeof(pktdata),
+//    &dest_addr, 2333);
 }
 
 
@@ -286,7 +319,10 @@ PROCESS_THREAD(acme_switch, ev, data) {
   // Register a simple UDP socket
   simple_udp_register(&udp_conn, UDP_LISTEN_PORT, NULL, 0, receiver);
 
-  etimer_set(&periodic_timer, 2*CLOCK_SECOND);
+  // Register for UDP listener
+  simple_udp_register(&udp_conn_cc, UDP_PORT_VIRT_VOLT, NULL, 0, cc_receiver);
+
+  etimer_set(&periodic_timer, 10*CLOCK_SECOND);
 
   while(1) {
     PROCESS_YIELD();

@@ -57,6 +57,13 @@ typedef struct {
   uint8_t power_state;
 } fram_config_t;
 
+typedef struct {
+  uint32_t vpeak;              // max voltage of AC waveform
+  uint32_t ticks_since_rising; // time from rising zero-crossing of AC signal to SFD
+  uint16_t chksum_balance;     // 16 bits to compensate for checksum
+  uint8_t  ending;             // Magic byte to identify these packets
+} __attribute__ ((__packed__)) voltage_data_t;
+
 
 #define RELAY_OFF 0
 #define RELAY_ON  1
@@ -69,5 +76,7 @@ typedef struct {
 
 #define UDP_LISTEN_PORT 47652
 #define UDP_REMOTE_PORT 47653
+
+#define UDP_PORT_VIRT_VOLT 39888
 
 #endif
