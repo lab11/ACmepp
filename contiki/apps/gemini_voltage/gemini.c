@@ -8,7 +8,7 @@
  * \file
  *     Example demonstrating the cc2538dk platform
  */
-#include "coilcube_ip.h"
+#include "gemini.h"
 #include "contiki-net.h"
 #include "contiki.h"
 #include "cpu.h"

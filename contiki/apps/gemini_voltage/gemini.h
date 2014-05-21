@@ -1,5 +1,5 @@
-#ifndef __COILCUBE_IP_H__
-#define __COILCUBE_IP_H__
+#ifndef __GEMINI_H__
+#define __GEMINI_H__
 
 #include <stdint.h>
 

@@ -1,5 +1,5 @@
 DEFINES+=PROJECT_CONF_H=\"project-conf.h\"
-CONTIKI_PROJECT = zeros
+CONTIKI_PROJECT = gemini
 
 TARGETDIRS += ../../platform
 
