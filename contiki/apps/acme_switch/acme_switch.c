@@ -1,12 +1,11 @@
 /**
- * \addtogroup cc2538
+ * \addtogroup acme++
  * @{
  *
  *
  * @{
  *
- * \file
- *     Example demonstrating the cc2538dk platform
+ * \file App for making ACme++ a wireless switch
  */
 #include "coilcube_ip.h"
 #include "contiki-net.h"
@@ -110,6 +109,8 @@ receiver(struct simple_udp_connection *c,
 
   uint8_t command;
 
+  leds_toggle(LEDS_GREEN);
+
   if (datalen == 0) return;
 
   command = data[0];
@@ -171,7 +172,7 @@ PROCESS_THREAD(acme_switch, ev, data) {
 
   PROCESS_BEGIN();
 
-  leds_off(LEDS_ALL);
+  leds_on(LEDS_ALL);
 
   // Read the FRAM
   fm25lb_read(FRAM_ADDR_CONFIG, sizeof(fram_config_t), (uint8_t*) &config);

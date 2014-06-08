@@ -22,7 +22,7 @@
 
 // Set the RF channel and panid
 #define IEEE802154_CONF_PANID 0x0022
-#define CC2538_RF_CONF_CHANNEL 21
+#define CC2538_RF_CONF_CHANNEL 19
 
 // Don't need TCP
 #define UIP_CONF_TCP 0
@@ -41,7 +41,7 @@
 
 #define UIP_CONF_LOGGING 0
 
-
+#define IEEE_ADDR_CONF_USE_SECONDARY_LOCATION 1
 
 
 

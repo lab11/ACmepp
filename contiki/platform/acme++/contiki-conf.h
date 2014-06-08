@@ -84,52 +84,6 @@ typedef uint32_t rtimer_clock_t;
 /** @} */
 /*---------------------------------------------------------------------------*/
 /**
- * \name ADE7753 configuration
- *
- * These values configure which CC2538 pins to use for the ADE chip.
- * @{
- */
-#define ADE7753_IRQ_N_PORT_NUM GPIO_B_NUM
-#define ADE7753_IRQ_N_PIN      1
-#define ADE7753_ZX_PORT_NUM    GPIO_B_NUM
-#define ADE7753_ZX_PIN         0
-#define ADE7753_CF_PORT_NUM    GPIO_C_NUM
-#define ADE7753_CF_PIN         7
-#define ADE7753_CS_N_PORT_NUM  GPIO_B_NUM
-#define ADE7753_CS_N_PIN       2
-/** @} */
-/*---------------------------------------------------------------------------*/
-
-/*---------------------------------------------------------------------------*/
-/**
- * \name FM25LB configuration
- *
- * These values configure which CC2538 pins to use for the FRAM chip.
- * @{
- */
-#define FM25LB_HOLD_N_PORT_NUM GPIO_C_NUM
-#define FM25LB_HOLD_N_PIN      1
-#define FM25LB_WP_N_PORT_NUM   GPIO_C_NUM
-#define FM25LB_WP_N_PIN        6
-#define FM25LB_CS_N_PORT_NUM   GPIO_C_NUM
-#define FM25LB_CS_N_PIN        5
-/** @} */
-/*---------------------------------------------------------------------------*/
-/**
- * \name SPI configuration
- *
- * These values configure which CC2538 pins to use for the SPI lines.
- * @{
- */
-#define SPI_CLK_PORT  GPIO_C_NUM
-#define SPI_CLK_PIN   2
-#define SPI_MOSI_PORT GPIO_C_NUM
-#define SPI_MOSI_PIN  3
-#define SPI_MISO_PORT GPIO_C_NUM
-#define SPI_MISO_PIN  4
-/** @} */
-/*---------------------------------------------------------------------------*/
-/**
  * \name USB 'core' configuration
  *
  * Those values are not meant to be modified by the user, except where stated
