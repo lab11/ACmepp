@@ -3893,6 +3893,25 @@
 </device>
 </devices>
 </deviceset>
+<deviceset name="MPZ2012S300A" prefix="L">
+<description>FERRITE CHIP 30 OHM 6A 0805</description>
+<gates>
+<gate name="G$1" symbol="EMI_SUPPRESSION_FERRITE_BEAD" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="0805_RESISTOR">
+<connects>
+<connect gate="G$1" pin="P$1" pad="P$1"/>
+<connect gate="G$1" pin="P$2" pad="P$2"/>
+</connects>
+<technologies>
+<technology name="">
+<attribute name="DIGIKEY" value="445-1566-1-ND" constant="no"/>
+</technology>
+</technologies>
+</device>
+</devices>
+</deviceset>
 </devicesets>
 </library>
 </drawing>
