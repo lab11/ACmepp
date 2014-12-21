@@ -137,9 +137,9 @@ receiver(struct simple_udp_connection *c,
 static void periodic () {
   leds_toggle(LEDS_RED);
 
-  simple_udp_sendto_port(&udp_conn,
-    (uint8_t*) "aaabbbcccdddeeefffggghhfdsafdafdsafdbfdabffdsafdsafdsafdsa", 25,
-    &dest_addr, UDP_REMOTE_PORT);
+  // simple_udp_sendto_port(&udp_conn,
+  //   (uint8_t*) "aaabbbcccdddeeefffggghhfdsafdafdsafdbfdabffdsafdsafdsafdsa", 25,
+  //   &dest_addr, UDP_REMOTE_PORT);
 }
 
 
