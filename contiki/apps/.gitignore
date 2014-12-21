@@ -9,3 +9,5 @@ obj_*
 *.map
 *.a
 *.cc2538dk
+symbols.h
+symbols.c
