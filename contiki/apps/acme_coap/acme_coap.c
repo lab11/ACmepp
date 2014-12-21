@@ -1,7 +1,7 @@
 /**
  * App for making ACme++ a wireless switch with an auto-turn-back-on function
  */
-#include "settings.h"
+#include "acme_coap.h"
 #include "contiki-net.h"
 #include "contiki.h"
 #include "cpu.h"
@@ -21,8 +21,10 @@
 #include "net/ipv6/uip-ds6-nbr.h"
 #include <stdio.h>
 #include <stdint.h>
+#include "rest-engine.h"
 
 #include "fm25lb.h"
+#include "ade7753.h"
 /*---------------------------------------------------------------------------*/
 #define LOOP_INTERVAL       CLOCK_SECOND
 #define LEDS_OFF_HYSTERISIS (RTIMER_SECOND >> 1)
@@ -34,46 +36,21 @@
 #define BROADCAST_CHANNEL   129
 /*---------------------------------------------------------------------------*/
 
-// Maximum number of minutes to allow the load to be off.
-#define FAILSAFE_TIME_MINUTES 1
-
-#define ONE_MINUTE (60*CLOCK_SECOND) // Length of
 
 static uip_ipaddr_t dest_addr;
 static struct simple_udp_connection udp_conn;
 
-// Timer that makes sure the ACme++ turns back on after a certain time.
-static struct ctimer failsafe_timer;
-
 fram_config_t config;
 
 
-PROCESS(acme_switch, "ACme Failsafe");
-AUTOSTART_PROCESSES(&acme_switch);
+PROCESS(acme, "ACme++ With CoAP Support");
+AUTOSTART_PROCESSES(&acme);
 
 
 static void write_config ();
 static void load_on ();
 static void load_off ();
 static void load_set (uint8_t on_off);
-
-
-// When this is called we stopped receiving packets so turn the load
-// back on!
-static void failsafe_timer_callback (void *ptr) {
-  static int failsafe_timer_counter = 0;
-
-  // Increment the counter. Each counter is a minute.
-  failsafe_timer_counter++;
-
-  if (failsafe_timer_counter >= FAILSAFE_TIME_MINUTES) {
-    // Ahh! Turn the load back on!
-    load_on();
-  } else {
-    // Make the timer fire again
-    ctimer_set(&failsafe_timer, ONE_MINUTE, failsafe_timer_callback, NULL);
-  }
-}
 
 
 // Write the config struct back to the FRAM
@@ -87,9 +64,6 @@ static void load_on () {
   GPIO_SET_PIN(RELAY_CTRL_BASE, RELAY_CTRL_MASK);
   config.power_state = RELAY_ON;
   write_config();
-
-  // Restart the watchdog on every command
-  ctimer_restart(&failsafe_timer);
 }
 
 // Turn the plugged in load off
@@ -98,9 +72,6 @@ static void load_off () {
   GPIO_CLR_PIN(RELAY_CTRL_BASE, RELAY_CTRL_MASK);
   config.power_state = RELAY_OFF;
   write_config();
-
-  // Restart the watchdog on every command
-  ctimer_restart(&failsafe_timer);
 }
 
 // Turn the plugged load to the given power state
@@ -142,8 +113,273 @@ receiver(struct simple_udp_connection *c,
   }
 }
 
+/*******************************************************************************
+ * LED
+ ******************************************************************************/
 
-PROCESS_THREAD(acme_switch, ev, data) {
+
+static void
+led_red_toggle_handler(void *request,
+                       void *response,
+                       uint8_t *buffer,
+                       uint16_t preferred_size,
+                       int32_t *offset)
+{
+  leds_toggle(LEDS_RED);
+}
+
+/* A simple actuator example. Toggles the red led */
+RESOURCE(coap_led_red_toggle,
+         "title=\"Red LED\";rt=\"Control\"",
+         NULL,
+         led_red_toggle_handler,
+         NULL,
+         NULL);
+
+
+
+
+/*******************************************************************************
+ * onoffdevice
+ ******************************************************************************/
+
+
+// Respond with JSON
+static void
+onoffdevice_get_handler(void *request,
+                  void *response,
+                  uint8_t *buffer,
+                  uint16_t preferred_size,
+                  int32_t *offset)
+{
+  int length;
+
+  length = snprintf(buffer, REST_MAX_CHUNK_SIZE, "{\"Power\":%s}", (config.power_state)?"true":"false");
+
+  REST.set_header_content_type(response, REST.type.APPLICATION_JSON);
+  REST.set_response_payload(response, buffer, length);
+}
+
+// set the relay
+static void
+onoffdevice_post_handler(void *request,
+                  void *response,
+                  uint8_t *buffer,
+                  uint16_t preferred_size,
+                  int32_t *offset)
+{
+  int length;
+  const char* Power = NULL;
+
+  length = REST.get_post_variable(request, "Power", &Power);
+  if (length > 0) {
+    if (strncmp(Power, "true", length) == 0) {
+      load_on();
+    } else if (strncmp(Power, "false", length) == 0) {
+      load_off();
+    } else {
+      REST.set_response_status(response, REST.status.BAD_REQUEST);
+    }
+  } else {
+    REST.set_response_status(response, REST.status.BAD_REQUEST);
+  }
+}
+
+RESOURCE(coap_onoffdevice,
+         "title=\"onoffdevice\";rt=\"AC Relay\"",
+         onoffdevice_get_handler,
+         onoffdevice_post_handler,
+         onoffdevice_post_handler,
+         NULL);
+
+
+/*******************************************************************************
+ * onoffdevice/Power
+ ******************************************************************************/
+
+// Respond with JSON
+static void
+onoffdevice_power_get_handler(void *request,
+                  void *response,
+                  uint8_t *buffer,
+                  uint16_t preferred_size,
+                  int32_t *offset)
+{
+  int length;
+
+  length = snprintf(buffer, REST_MAX_CHUNK_SIZE, "{\"Power\":%s}", (config.power_state)?"true":"false");
+
+  REST.set_header_content_type(response, REST.type.APPLICATION_JSON);
+  REST.set_response_payload(response, buffer, length);
+}
+
+// set the relay
+static void
+onoffdevice_power_post_handler(void *request,
+                  void *response,
+                  uint8_t *buffer,
+                  uint16_t preferred_size,
+                  int32_t *offset)
+{
+  int length;
+  const char* payload = NULL;
+
+  length = REST.get_request_payload(request, &payload);
+  if (length > 0) {
+    if (strncmp(payload, "true", length) == 0) {
+      load_on();
+    } else if (strncmp(payload, "false", length) == 0) {
+      load_off();
+    } else {
+      REST.set_response_status(response, REST.status.BAD_REQUEST);
+    }
+  } else {
+    REST.set_response_status(response, REST.status.BAD_REQUEST);
+  }
+}
+
+RESOURCE(coap_onoffdevice_power,
+         "title=\"onoffdevice/Power\";rt=\"AC Relay\"",
+         onoffdevice_power_get_handler,
+         onoffdevice_power_post_handler,
+         onoffdevice_power_post_handler,
+         NULL);
+
+
+
+/*******************************************************************************
+ * powermeter
+ ******************************************************************************/
+
+
+// Respond with JSON
+static void
+powermeter_get_handler(void *request,
+                  void *response,
+                  uint8_t *buffer,
+                  uint16_t preferred_size,
+                  int32_t *offset)
+{
+  int length;
+  char json[] = "{\"Power\":%i,\"Voltage\":%u,\"Period\":%u}";
+
+  int32_t  power   = 0;
+  uint32_t voltage = ade7753_getMaxVoltage();
+  uint32_t period  = ade7753_readReg(ADEREG_PERIOD);
+
+  length = snprintf(buffer, REST_MAX_CHUNK_SIZE, json, power, voltage, period);
+
+  REST.set_header_content_type(response, REST.type.APPLICATION_JSON);
+  REST.set_response_payload(response, buffer, length);
+}
+
+RESOURCE(coap_powermeter,
+         "title=\"powermeter\"",
+         powermeter_get_handler,
+         NULL,
+         NULL,
+         NULL);
+
+/*******************************************************************************
+ * powermeter/Voltage
+ ******************************************************************************/
+
+
+// Respond with JSON
+static void
+powermeter_voltage_get_handler(void *request,
+                  void *response,
+                  uint8_t *buffer,
+                  uint16_t preferred_size,
+                  int32_t *offset)
+{
+  int length;
+  char json[] = "{\"Voltage\":%u}";
+
+  uint32_t voltage = ade7753_getMaxVoltage();
+
+  length = snprintf(buffer, REST_MAX_CHUNK_SIZE, json, voltage);
+
+  REST.set_header_content_type(response, REST.type.APPLICATION_JSON);
+  REST.set_response_payload(response, buffer, length);
+}
+
+RESOURCE(coap_powermeter_voltage,
+         "title=\"powermeter/Voltage\"",
+         powermeter_voltage_get_handler,
+         NULL,
+         NULL,
+         NULL);
+
+
+/*******************************************************************************
+ * powermeter/Power
+ ******************************************************************************/
+
+
+// Respond with JSON
+static void
+powermeter_power_get_handler(void *request,
+                  void *response,
+                  uint8_t *buffer,
+                  uint16_t preferred_size,
+                  int32_t *offset)
+{
+  int length;
+  char json[] = "{\"Power\":%i}";
+
+  int32_t  power   = 0;
+
+  length = snprintf(buffer, REST_MAX_CHUNK_SIZE, json, power);
+
+  REST.set_header_content_type(response, REST.type.APPLICATION_JSON);
+  REST.set_response_payload(response, buffer, length);
+}
+
+RESOURCE(coap_powermeter_power,
+         "title=\"powermeter/Power\"",
+         powermeter_power_get_handler,
+         NULL,
+         NULL,
+         NULL);
+
+/*******************************************************************************
+ * powermeter/Period
+ ******************************************************************************/
+
+
+// Respond with JSON
+static void
+powermeter_period_get_handler(void *request,
+                  void *response,
+                  uint8_t *buffer,
+                  uint16_t preferred_size,
+                  int32_t *offset)
+{
+  int length;
+  char json[] = "{\"Period\":%u}";
+
+  uint32_t period  = ade7753_readReg(ADEREG_PERIOD);
+
+  length = snprintf(buffer, REST_MAX_CHUNK_SIZE, json, period);
+
+  REST.set_header_content_type(response, REST.type.APPLICATION_JSON);
+  REST.set_response_payload(response, buffer, length);
+}
+
+RESOURCE(coap_powermeter_period,
+         "title=\"powermeter/Period\"",
+         powermeter_period_get_handler,
+         NULL,
+         NULL,
+         NULL);
+
+
+
+
+
+
+PROCESS_THREAD(acme, ev, data) {
   PROCESS_BEGIN();
 
   leds_on(LEDS_ALL);
@@ -168,13 +404,28 @@ PROCESS_THREAD(acme_switch, ev, data) {
   uiplib_ipaddrconv(GATD_ADDR, &dest_addr);
 
   // Register a simple UDP socket
-  simple_udp_register(&udp_conn, UDP_LISTEN_PORT, NULL, 0, receiver);
+  //simple_udp_register(&udp_conn, UDP_LISTEN_PORT, NULL, 0, receiver);
 
-  // Start the watchdog
-  ctimer_set(&failsafe_timer, ONE_MINUTE, failsafe_timer_callback, NULL);
+  // CoAP + REST
+
+  rest_init_engine();
+
+  // Control LEDs
+  rest_activate_resource(&coap_led_red_toggle, "actuators/led_toggle");
+
+  // Control and get relay state
+  rest_activate_resource(&coap_onoffdevice, "onoffdevice");
+  rest_activate_resource(&coap_onoffdevice_power, "onoffdevice/Power");
+
+
+  rest_activate_resource(&coap_powermeter, "powermeter");
+  rest_activate_resource(&coap_powermeter_voltage, "powermeter/Voltage");
+  rest_activate_resource(&coap_powermeter_power, "powermeter/Power");
+  rest_activate_resource(&coap_powermeter_period, "powermeter/Period");
+
 
   while (1) {
-    PROCESS_YIELD();
+    PROCESS_WAIT_EVENT();
   }
 
   PROCESS_END();

@@ -14,7 +14,7 @@
 //#define CC2538_CONF_QUIET 1
 
 // IPv6 love
-#define UIP_CONF_IPV6 1
+//#define UIP_CONF_IPV6 1
 
 // Do not use some address set by the code, read it in from the magical info
 // page on the cc2538
@@ -26,11 +26,11 @@
 #define CC2538_RF_CONF_CHANNEL 19
 
 // Don't need TCP
-#define UIP_CONF_TCP 0
-#define UIP_CONF_UDP 1
+//#define UIP_CONF_TCP 0
+//#define UIP_CONF_UDP 1
 
 // A router
-#define UIP_CONF_ROUTER 1
+//#define UIP_CONF_ROUTER 1
 
 
 // RPL
