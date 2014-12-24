@@ -36,8 +36,10 @@
 #define BROADCAST_CHANNEL   129
 /*---------------------------------------------------------------------------*/
 
+#define SW_VERSION "1.0"
+#define HW_VERSION "B"
 
-static uip_ipaddr_t dest_addr;
+static uip_ipaddr_t gatd_ip;
 static struct simple_udp_connection udp_conn;
 
 fram_config_t config;
@@ -113,29 +115,38 @@ receiver(struct simple_udp_connection *c,
   }
 }
 
-/*******************************************************************************
- * LED
- ******************************************************************************/
+#define TO_CHAR(X) (((X) < 10) ? ('0' + (X)) : ('a' + ((X) - 10)))
+int inet_ntop6 (const uip_ipaddr_t *addr, char *buf, int cnt) {
+  uint16_t block, block2;
+  char *end = buf + cnt;
+  int i, j, compressed = 0;
 
+  for (j = 0; j < 8; j++) {
+    if (buf > end - 8)
+      goto done;
 
-static void
-led_red_toggle_handler(void *request,
-                       void *response,
-                       uint8_t *buffer,
-                       uint16_t preferred_size,
-                       int32_t *offset)
-{
-  leds_toggle(LEDS_RED);
+    //block = ntohs(addr->s6_addr16[j]);
+    block = (addr->u8[j*2] << 8) + addr->u8[(j*2) + 1];
+    block2 = block;
+    for (i = 4; i <= 16; i+=4) {
+      if (block > (0xffff >> i) || (compressed == 2 && i == 16)) {
+        *buf++ = TO_CHAR((block >> (16 - i)) & 0xf);
+      }
+    }
+    if (block2 == 0 && compressed == 0) {
+      *buf++ = ':';
+      compressed++;
+    }
+    if (block2 != 0 && compressed == 1) compressed++;
+
+    if (j < 7 && compressed != 1) *buf++ = ':';
+  }
+  if (compressed == 1)
+    *buf++ = ':';
+ done:
+  *buf++ = '\0';
+  return buf - (end - cnt);
 }
-
-/* A simple actuator example. Toggles the red led */
-RESOURCE(coap_led_red_toggle,
-         "title=\"Red LED\";rt=\"Control\"",
-         NULL,
-         led_red_toggle_handler,
-         NULL,
-         NULL);
-
 
 
 
@@ -143,31 +154,26 @@ RESOURCE(coap_led_red_toggle,
  * onoffdevice
  ******************************************************************************/
 
-
-// Respond with JSON
 static void
 onoffdevice_get_handler(void *request,
                   void *response,
                   uint8_t *buffer,
                   uint16_t preferred_size,
-                  int32_t *offset)
-{
+                  int32_t *offset) {
   int length;
 
-  length = snprintf(buffer, REST_MAX_CHUNK_SIZE, "{\"Power\":%s}", (config.power_state)?"true":"false");
+  length = snprintf((char*) buffer, REST_MAX_CHUNK_SIZE, "Power=%s", (config.power_state)?"true":"false");
 
-  REST.set_header_content_type(response, REST.type.APPLICATION_JSON);
+  REST.set_header_content_type(response, REST.type.TEXT_PLAIN);
   REST.set_response_payload(response, buffer, length);
 }
 
-// set the relay
 static void
 onoffdevice_post_handler(void *request,
                   void *response,
                   uint8_t *buffer,
                   uint16_t preferred_size,
-                  int32_t *offset)
-{
+                  int32_t *offset) {
   int length;
   const char* Power = NULL;
 
@@ -197,34 +203,30 @@ RESOURCE(coap_onoffdevice,
  * onoffdevice/Power
  ******************************************************************************/
 
-// Respond with JSON
 static void
 onoffdevice_power_get_handler(void *request,
                   void *response,
                   uint8_t *buffer,
                   uint16_t preferred_size,
-                  int32_t *offset)
-{
+                  int32_t *offset) {
   int length;
 
-  length = snprintf(buffer, REST_MAX_CHUNK_SIZE, "{\"Power\":%s}", (config.power_state)?"true":"false");
+  length = snprintf((char*) buffer, REST_MAX_CHUNK_SIZE, "%s", (config.power_state)?"true":"false");
 
-  REST.set_header_content_type(response, REST.type.APPLICATION_JSON);
+  REST.set_header_content_type(response, REST.type.TEXT_PLAIN);
   REST.set_response_payload(response, buffer, length);
 }
 
-// set the relay
 static void
 onoffdevice_power_post_handler(void *request,
                   void *response,
                   uint8_t *buffer,
                   uint16_t preferred_size,
-                  int32_t *offset)
-{
+                  int32_t *offset) {
   int length;
   const char* payload = NULL;
 
-  length = REST.get_request_payload(request, &payload);
+  length = REST.get_request_payload(request, (const uint8_t**) &payload);
   if (length > 0) {
     if (strncmp(payload, "true", length) == 0) {
       load_on();
@@ -245,31 +247,128 @@ RESOURCE(coap_onoffdevice_power,
          onoffdevice_power_post_handler,
          NULL);
 
+/*******************************************************************************
+ * led
+ ******************************************************************************/
 
+static void
+led_get_handler(void *request,
+                  void *response,
+                  uint8_t *buffer,
+                  uint16_t preferred_size,
+                  int32_t *offset) {
+  int length;
+
+  length = snprintf((char*) buffer, REST_MAX_CHUNK_SIZE, "Power=%s",
+    ((leds_get()&LEDS_RED)==LEDS_RED)?"true":"false");
+
+  REST.set_header_content_type(response, REST.type.TEXT_PLAIN);
+  REST.set_response_payload(response, buffer, length);
+}
+
+static void
+led_post_handler(void *request,
+                  void *response,
+                  uint8_t *buffer,
+                  uint16_t preferred_size,
+                  int32_t *offset) {
+  int length;
+  const char* Power = NULL;
+
+  length = REST.get_post_variable(request, "Power", &Power);
+  if (length > 0) {
+    if (strncmp(Power, "true", length) == 0) {
+      leds_on(LEDS_RED);
+    } else if (strncmp(Power, "false", length) == 0) {
+      leds_off(LEDS_RED);
+    } else {
+      REST.set_response_status(response, REST.status.BAD_REQUEST);
+    }
+  } else {
+    REST.set_response_status(response, REST.status.BAD_REQUEST);
+  }
+}
+
+RESOURCE(coap_led,
+         "title=\"onoffdevice\";rt=\"AC Relay\"",
+         led_get_handler,
+         led_post_handler,
+         led_post_handler,
+         NULL);
+
+
+
+/*******************************************************************************
+ * led/Power
+ ******************************************************************************/
+
+static void
+led_power_get_handler(void *request,
+                       void *response,
+                       uint8_t *buffer,
+                       uint16_t preferred_size,
+                       int32_t *offset) {
+  int length;
+
+  length = snprintf((char*) buffer, REST_MAX_CHUNK_SIZE, "%s",
+    ((leds_get()&LEDS_RED)==LEDS_RED)?"true":"false");
+
+  REST.set_header_content_type(response, REST.type.TEXT_PLAIN);
+  REST.set_response_payload(response, buffer, length);
+}
+
+// set the relay
+static void
+led_power_post_handler(void *request,
+                  void *response,
+                  uint8_t *buffer,
+                  uint16_t preferred_size,
+                  int32_t *offset) {
+  int length;
+  const char* payload = NULL;
+
+  length = REST.get_request_payload(request, (const uint8_t**) &payload);
+  if (length > 0) {
+    if (strncmp(payload, "true", length) == 0) {
+      leds_on(LEDS_RED);
+    } else if (strncmp(payload, "false", length) == 0) {
+      leds_off(LEDS_RED);
+    } else {
+      REST.set_response_status(response, REST.status.BAD_REQUEST);
+    }
+  } else {
+    REST.set_response_status(response, REST.status.BAD_REQUEST);
+  }
+}
+
+/* A simple actuator example. Toggles the red led */
+RESOURCE(coap_led_power,
+         "title=\"Red LED\";rt=\"Control\"",
+         led_power_get_handler,
+         led_power_post_handler,
+         led_power_post_handler,
+         NULL);
 
 /*******************************************************************************
  * powermeter
  ******************************************************************************/
 
-
-// Respond with JSON
 static void
 powermeter_get_handler(void *request,
                   void *response,
                   uint8_t *buffer,
                   uint16_t preferred_size,
-                  int32_t *offset)
-{
+                  int32_t *offset) {
   int length;
-  char json[] = "{\"Power\":%i,\"Voltage\":%u,\"Period\":%u}";
+  char res[] = "Power=%i&Voltage=%u&Period=%u";
 
   int32_t  power   = 0;
   uint32_t voltage = ade7753_getMaxVoltage();
   uint32_t period  = ade7753_readReg(ADEREG_PERIOD);
 
-  length = snprintf(buffer, REST_MAX_CHUNK_SIZE, json, power, voltage, period);
+  length = snprintf((char*) buffer, REST_MAX_CHUNK_SIZE, res, power, voltage, period);
 
-  REST.set_header_content_type(response, REST.type.APPLICATION_JSON);
+  REST.set_header_content_type(response, REST.type.TEXT_PLAIN);
   REST.set_response_payload(response, buffer, length);
 }
 
@@ -284,8 +383,6 @@ RESOURCE(coap_powermeter,
  * powermeter/Voltage
  ******************************************************************************/
 
-
-// Respond with JSON
 static void
 powermeter_voltage_get_handler(void *request,
                   void *response,
@@ -294,13 +391,13 @@ powermeter_voltage_get_handler(void *request,
                   int32_t *offset)
 {
   int length;
-  char json[] = "{\"Voltage\":%u}";
+  char res[] = "Voltage=%u";
 
   uint32_t voltage = ade7753_getMaxVoltage();
 
-  length = snprintf(buffer, REST_MAX_CHUNK_SIZE, json, voltage);
+  length = snprintf((char*) buffer, REST_MAX_CHUNK_SIZE, res, voltage);
 
-  REST.set_header_content_type(response, REST.type.APPLICATION_JSON);
+  REST.set_header_content_type(response, REST.type.TEXT_PLAIN);
   REST.set_response_payload(response, buffer, length);
 }
 
@@ -316,8 +413,6 @@ RESOURCE(coap_powermeter_voltage,
  * powermeter/Power
  ******************************************************************************/
 
-
-// Respond with JSON
 static void
 powermeter_power_get_handler(void *request,
                   void *response,
@@ -326,11 +421,11 @@ powermeter_power_get_handler(void *request,
                   int32_t *offset)
 {
   int length;
-  char json[] = "{\"Power\":%i}";
+  char res[] = "Power=%i";
 
   int32_t  power   = 0;
 
-  length = snprintf(buffer, REST_MAX_CHUNK_SIZE, json, power);
+  length = snprintf((char*) buffer, REST_MAX_CHUNK_SIZE, res, power);
 
   REST.set_header_content_type(response, REST.type.APPLICATION_JSON);
   REST.set_response_payload(response, buffer, length);
@@ -347,8 +442,6 @@ RESOURCE(coap_powermeter_power,
  * powermeter/Period
  ******************************************************************************/
 
-
-// Respond with JSON
 static void
 powermeter_period_get_handler(void *request,
                   void *response,
@@ -357,13 +450,13 @@ powermeter_period_get_handler(void *request,
                   int32_t *offset)
 {
   int length;
-  char json[] = "{\"Period\":%u}";
+  char res[] = "Period=%u";
 
   uint32_t period  = ade7753_readReg(ADEREG_PERIOD);
 
-  length = snprintf(buffer, REST_MAX_CHUNK_SIZE, json, period);
+  length = snprintf((char*) buffer, REST_MAX_CHUNK_SIZE, res, period);
 
-  REST.set_header_content_type(response, REST.type.APPLICATION_JSON);
+  REST.set_header_content_type(response, REST.type.TEXT_PLAIN);
   REST.set_response_payload(response, buffer, length);
 }
 
@@ -374,8 +467,171 @@ RESOURCE(coap_powermeter_period,
          NULL,
          NULL);
 
+/*******************************************************************************
+ * device
+ ******************************************************************************/
+
+static void
+device_get_handler(void *request,
+                  void *response,
+                  uint8_t *buffer,
+                  uint16_t preferred_size,
+                  int32_t *offset) {
+  int length;
+  char res[] = "GATD_IP=%s&software/Version=%s&hardware/Version=%s";
+  char gatd[40];
+
+  inet_ntop6(&gatd_ip, gatd, 40);
+
+  length = snprintf((char*) buffer, REST_MAX_CHUNK_SIZE, res, gatd, SW_VERSION, HW_VERSION);
+
+  REST.set_header_content_type(response, REST.type.TEXT_PLAIN);
+  REST.set_response_payload(response, buffer, length);
+}
+
+static void
+device_post_handler(void *request,
+                  void *response,
+                  uint8_t *buffer,
+                  uint16_t preferred_size,
+                  int32_t *offset) {
+  int length;
+  const char* GatdIp = NULL;
+
+  length = REST.get_post_variable(request, "GATD_IP", &GatdIp);
+  if (length > 0) {
+    uip_ip6addr_t new_gatd_ip;
+    int ret;
+
+    ret = uiplib_ip6addrconv(GatdIp, &new_gatd_ip);
+
+    if (ret) {
+      memcpy(gatd_ip.u8, new_gatd_ip.u8, sizeof(uip_ip6addr_t));
+    } else {
+      REST.set_response_status(response, REST.status.BAD_REQUEST);
+    }
+  } else {
+    REST.set_response_status(response, REST.status.BAD_REQUEST);
+  }
+}
+
+RESOURCE(coap_device,
+         "title=\"device\"",
+         device_get_handler,
+         device_post_handler,
+         device_post_handler,
+         NULL);
 
 
+/*******************************************************************************
+ * device/GATD_IP
+ ******************************************************************************/
+
+static void
+device_gatdip_get_handler(void *request,
+                  void *response,
+                  uint8_t *buffer,
+                  uint16_t preferred_size,
+                  int32_t *offset) {
+  int length;
+  char res[] = "%s";
+  char gatd[40];
+
+  inet_ntop6(&gatd_ip, gatd, 40);
+
+  length = snprintf((char*) buffer, REST_MAX_CHUNK_SIZE, res, gatd);
+
+  REST.set_header_content_type(response, REST.type.TEXT_PLAIN);
+  REST.set_response_payload(response, buffer, length);
+}
+
+static void
+device_gatdip_post_handler(void *request,
+                  void *response,
+                  uint8_t *buffer,
+                  uint16_t preferred_size,
+                  int32_t *offset) {
+  int length;
+  const char* payload = NULL;
+
+  length = REST.get_request_payload(request, (const uint8_t**) &payload);
+  if (length > 0) {
+    uip_ip6addr_t new_gatd_ip;
+    int ret;
+
+    ret = uiplib_ip6addrconv(payload, &new_gatd_ip);
+
+    if (ret) {
+      memcpy(gatd_ip.u8, new_gatd_ip.u8, sizeof(uip_ip6addr_t));
+    } else {
+      REST.set_response_status(response, REST.status.BAD_REQUEST);
+    }
+  } else {
+    REST.set_response_status(response, REST.status.BAD_REQUEST);
+  }
+}
+
+RESOURCE(coap_device_gatdip,
+         "title=\"device/GATD_IP\";rt=\"gatd\"",
+         device_gatdip_get_handler,
+         device_gatdip_post_handler,
+         device_gatdip_post_handler,
+         NULL);
+
+
+
+/*******************************************************************************
+ * device/software/Version
+ ******************************************************************************/
+
+static void
+device_software_version_get_handler(void *request,
+                  void *response,
+                  uint8_t *buffer,
+                  uint16_t preferred_size,
+                  int32_t *offset) {
+  int length;
+  char res[] = "%s";
+
+  length = snprintf((char*) buffer, REST_MAX_CHUNK_SIZE, res, SW_VERSION);
+
+  REST.set_header_content_type(response, REST.type.TEXT_PLAIN);
+  REST.set_response_payload(response, buffer, length);
+}
+
+RESOURCE(coap_device_software_version,
+         "title=\"device/software/Version\";rt=\"sw\"",
+         device_software_version_get_handler,
+         NULL,
+         NULL,
+         NULL);
+
+
+/*******************************************************************************
+ * device/hardware/Version
+ ******************************************************************************/
+
+static void
+device_hardware_version_get_handler(void *request,
+                  void *response,
+                  uint8_t *buffer,
+                  uint16_t preferred_size,
+                  int32_t *offset) {
+  int length;
+  char res[] = "%s";
+
+  length = snprintf((char*) buffer, REST_MAX_CHUNK_SIZE, res, HW_VERSION);
+
+  REST.set_header_content_type(response, REST.type.TEXT_PLAIN);
+  REST.set_response_payload(response, buffer, length);
+}
+
+RESOURCE(coap_device_hardware_version,
+         "title=\"device/hardware/Version\";rt=\"hw\"",
+         device_hardware_version_get_handler,
+         NULL,
+         NULL,
+         NULL);
 
 
 
@@ -401,27 +657,29 @@ PROCESS_THREAD(acme, ev, data) {
   load_set(config.power_state);
 
   // Setup the destination address
-  uiplib_ipaddrconv(GATD_ADDR, &dest_addr);
+  uiplib_ipaddrconv(GATD_ADDR, &gatd_ip);
 
   // Register a simple UDP socket
   //simple_udp_register(&udp_conn, UDP_LISTEN_PORT, NULL, 0, receiver);
 
   // CoAP + REST
-
   rest_init_engine();
 
-  // Control LEDs
-  rest_activate_resource(&coap_led_red_toggle, "actuators/led_toggle");
+  rest_activate_resource(&coap_onoffdevice,        "onoffdevice");
+  rest_activate_resource(&coap_onoffdevice_power,  "onoffdevice/Power");
 
-  // Control and get relay state
-  rest_activate_resource(&coap_onoffdevice, "onoffdevice");
-  rest_activate_resource(&coap_onoffdevice_power, "onoffdevice/Power");
+  rest_activate_resource(&coap_led,                "led");
+  rest_activate_resource(&coap_led_power,          "led/Power");
 
-
-  rest_activate_resource(&coap_powermeter, "powermeter");
+  rest_activate_resource(&coap_powermeter,         "powermeter");
   rest_activate_resource(&coap_powermeter_voltage, "powermeter/Voltage");
-  rest_activate_resource(&coap_powermeter_power, "powermeter/Power");
-  rest_activate_resource(&coap_powermeter_period, "powermeter/Period");
+  rest_activate_resource(&coap_powermeter_power,   "powermeter/Power");
+  rest_activate_resource(&coap_powermeter_period,  "powermeter/Period");
+
+  rest_activate_resource(&coap_device,             "device");
+  rest_activate_resource(&coap_device_gatdip,      "device/GATD_IP");
+  rest_activate_resource(&coap_device_software_version, "device/software/Version");
+  rest_activate_resource(&coap_device_hardware_version, "device/hardware/Version");
 
 
   while (1) {
