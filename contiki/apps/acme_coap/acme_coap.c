@@ -1,6 +1,3 @@
-/**
- * App for making ACme++ a wireless switch with an auto-turn-back-on function
- */
 #include "acme_coap.h"
 #include "contiki-net.h"
 #include "contiki.h"
@@ -22,6 +19,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "rest-engine.h"
+#include "er-coap-engine.h"
 
 #include "fm25lb.h"
 #include "ade7753.h"
@@ -39,10 +37,19 @@
 #define SW_VERSION "1.0"
 #define HW_VERSION "B"
 
+static struct etimer periodic_power_sample;
+
 static uip_ipaddr_t gatd_ip;
 static struct simple_udp_connection udp_conn;
 
 fram_config_t config;
+
+uint8_t state = 2;
+uint32_t energy;
+
+// Where to send message on power state change
+uip_ip6addr_t notify_statechange_ipaddr = {{0}};
+char notify_statechange_url[256] = {0};
 
 
 PROCESS(acme, "ACme++ With CoAP Support");
@@ -81,6 +88,17 @@ static void load_set (uint8_t on_off) {
   if (on_off == RELAY_ON) load_on();
   else if (on_off == RELAY_OFF) load_off();
 }
+
+void
+client_chunk_handler(void *response)
+{
+  // const uint8_t *chunk;
+
+  // int len = coap_get_payload(response, &chunk);
+
+  // printf("|%.*s", len, (char *)chunk);
+}
+
 
 
 
@@ -423,7 +441,7 @@ powermeter_power_get_handler(void *request,
   int length;
   char res[] = "Power=%i";
 
-  int32_t  power   = 0;
+  int32_t  power   = energy;
 
   length = snprintf((char*) buffer, REST_MAX_CHUNK_SIZE, res, power);
 
@@ -466,6 +484,107 @@ RESOURCE(coap_powermeter_period,
          NULL,
          NULL,
          NULL);
+
+
+
+/*******************************************************************************
+ * notify/statechange/IPAddr
+ ******************************************************************************/
+
+static void
+notify_statechange_ipaddr_get_handler(void *request,
+                       void *response,
+                       uint8_t *buffer,
+                       uint16_t preferred_size,
+                       int32_t *offset) {
+  int length;
+  char res[] = "%s";
+  char ipbuf[40];
+
+  inet_ntop6(&notify_statechange_ipaddr, ipbuf, 40);
+  length = snprintf((char*) buffer, REST_MAX_CHUNK_SIZE, res, ipbuf);
+
+  REST.set_header_content_type(response, REST.type.TEXT_PLAIN);
+  REST.set_response_payload(response, buffer, length);
+}
+
+static void
+notify_statechange_ipaddr_post_handler(void *request,
+                  void *response,
+                  uint8_t *buffer,
+                  uint16_t preferred_size,
+                  int32_t *offset) {
+  int length;
+  const char* payload = NULL;
+
+  length = REST.get_request_payload(request, (const uint8_t**) &payload);
+  if (length > 0) {
+    uip_ip6addr_t new_ip;
+    int ret;
+
+    ret = uiplib_ip6addrconv(payload, &new_ip);
+
+    if (ret) {
+      memcpy(notify_statechange_ipaddr.u8, new_ip.u8, sizeof(uip_ip6addr_t));
+    } else {
+      REST.set_response_status(response, REST.status.BAD_REQUEST);
+    }
+  } else {
+    REST.set_response_status(response, REST.status.BAD_REQUEST);
+  }
+}
+
+RESOURCE(coap_notify_statechange_ipaddr,
+         "title=\"Note State Change\";rt=\"Notify\"",
+         notify_statechange_ipaddr_get_handler,
+         notify_statechange_ipaddr_post_handler,
+         notify_statechange_ipaddr_post_handler,
+         NULL);
+
+
+/*******************************************************************************
+ * notify/statechange/URL
+ ******************************************************************************/
+
+static void
+notify_statechange_url_get_handler(void *request,
+                       void *response,
+                       uint8_t *buffer,
+                       uint16_t preferred_size,
+                       int32_t *offset) {
+  int length;
+
+  length = snprintf((char*) buffer, REST_MAX_CHUNK_SIZE, "%s", notify_statechange_url);
+
+  REST.set_header_content_type(response, REST.type.TEXT_PLAIN);
+  REST.set_response_payload(response, buffer, length);
+}
+
+static void
+notify_statechange_url_post_handler(void *request,
+                  void *response,
+                  uint8_t *buffer,
+                  uint16_t preferred_size,
+                  int32_t *offset) {
+  int length;
+  const char* payload = NULL;
+
+  length = REST.get_request_payload(request, (const uint8_t**) &payload);
+  if (length > 0) {
+    strncpy(notify_statechange_url, payload, 256);
+  } else {
+    REST.set_response_status(response, REST.status.BAD_REQUEST);
+  }
+}
+
+RESOURCE(coap_notify_statechange_url,
+         "title=\"Note State Change URL\";rt=\"Notify\"",
+         notify_statechange_url_get_handler,
+         notify_statechange_url_post_handler,
+         notify_statechange_url_post_handler,
+         NULL);
+
+
 
 /*******************************************************************************
  * device
@@ -676,14 +795,94 @@ PROCESS_THREAD(acme, ev, data) {
   rest_activate_resource(&coap_powermeter_power,   "powermeter/Power");
   rest_activate_resource(&coap_powermeter_period,  "powermeter/Period");
 
+  rest_activate_resource(&coap_notify_statechange_ipaddr, "notify/statechange/IPAddr");
+  rest_activate_resource(&coap_notify_statechange_url,    "notify/statechange/URL");
+
   rest_activate_resource(&coap_device,             "device");
   rest_activate_resource(&coap_device_gatdip,      "device/GATD_IP");
   rest_activate_resource(&coap_device_software_version, "device/software/Version");
   rest_activate_resource(&coap_device_hardware_version, "device/hardware/Version");
 
+  // CoAP Client
+  coap_init_engine();
+
+  etimer_set(&periodic_power_sample, CLOCK_SECOND);
 
   while (1) {
     PROCESS_WAIT_EVENT();
+
+    if (etimer_expired(&periodic_power_sample)) {
+      // periodic_sample();
+
+
+      // Putting this here because Contiki is a mess of macros...
+
+goto state_changed;
+      energy = ade7753_getActiveEnergy();
+
+      // Check for a state change
+      {
+        uint8_t current_state = 0;
+        if (energy > 1) {
+          current_state = 1;
+        }
+
+        if (state == 2) {
+          // unknown at startup
+          state = current_state;
+          // state_changed();
+          goto state_changed;
+        } else if (state == 1) {
+          state = current_state;
+          if (current_state == 0) {
+            // state_changed();
+          goto state_changed;
+          }
+        } else {
+          state = current_state;
+          if (current_state == 1) {
+            // state_changed();
+          goto state_changed;
+          }
+        }
+
+state_changed:
+
+        leds_toggle(LEDS_RED);
+
+        // Check that we have someone to tell
+        if (notify_statechange_ipaddr.u8[0] != 0 && notify_statechange_url[0] != 0) {
+
+          coap_packet_t request[1];
+
+          /* prepare request, TID is set by COAP_BLOCKING_REQUEST() */
+          coap_init_message(request, COAP_TYPE_CON, COAP_POST, 0);
+          coap_set_header_uri_path(request, notify_statechange_url);
+
+          const char msg[] = "Toggle!";
+
+          coap_set_payload(request, (uint8_t *)"true", 4);
+
+          // PRINT6ADDR(&server_ipaddr);
+          // PRINTF(" : %u\n", UIP_HTONS(REMOTE_PORT));
+
+          COAP_BLOCKING_REQUEST(&notify_statechange_ipaddr, UIP_HTONS(COAP_DEFAULT_PORT), request,
+                                client_chunk_handler);
+
+
+        }
+
+
+
+      }
+
+done:
+
+          // COAP_BLOCKING_REQUEST(&notify_statechange_ipaddr, UIP_HTONS(COAP_DEFAULT_PORT), request,
+          //                 client_chunk_handler);
+
+      etimer_restart(&periodic_power_sample);
+    }
   }
 
   PROCESS_END();

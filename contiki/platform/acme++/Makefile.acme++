@@ -38,6 +38,9 @@ ifdef ID
   BSL_FLAGS += -i $(ID)
 endif
 
+ifdef PORT
+  BSL_FLAGS += -p $(PORT)
+endif
+
 install: all
 	python $(BSL) -b 115200 -e -w -v $(BSL_FLAGS) $(CONTIKI_PROJECT).bin
-

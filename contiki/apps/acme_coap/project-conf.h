@@ -21,12 +21,14 @@
 #define IEEE_ADDR_CONF_HARDCODED 0
 
 // Set the RF channel and panid
-#define IEEE802154_CONF_PANID 0x689a
+// #define IEEE802154_CONF_PANID 0x689a
+#define IEEE802154_CONF_PANID 0x0022
 #define CC2538_RF_CONF_CHANNEL 19
 
 
 // RPL
-#define RPL_CONF_OF rpl_mrhof
+// #define RPL_CONF_OF rpl_mrhof
+#define RPL_CONF_OF rpl_of0
 
 #define UIP_CONF_LOGGING 0
 

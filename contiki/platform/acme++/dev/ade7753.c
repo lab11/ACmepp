@@ -43,6 +43,15 @@ uint32_t ade7753_getMaxVoltage() {
 	return (uint32_t) millivolts;
 }
 
+uint32_t ade7753_getActiveEnergy() {
+	uint32_t energy;
+
+	energy = ade7753_readReg(ADEREG_RAENERGY);
+
+	return energy;
+}
+
+
 
 void ade7753_configure_mode() {
   spi_set_mode(SSI_CR0_FRF_MOTOROLA, 0, SSI_CR0_SPH, 8);

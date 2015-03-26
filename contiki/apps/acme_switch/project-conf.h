@@ -7,6 +7,7 @@
  */
 
 #define NETSTACK_CONF_RDC     nullrdc_driver
+#define NETSTACK_CONF_MAC     nullmac_driver
 
 // Shut the thing up
 #define STARTUP_CONF_VERBOSE 0
