@@ -34,25 +34,28 @@
 #define BROADCAST_CHANNEL   129
 /*---------------------------------------------------------------------------*/
 
-#define SW_VERSION "1.0"
+// History
+// 1.0: CoAP added
+// 2.0: Power metering and the ability to send message on state change
+// 2.1: Change threshold for state change detection
+#define SW_VERSION "2.1"
 #define HW_VERSION "B"
 
 static struct etimer periodic_power_sample;
+coap_packet_t request[1];
 
 static uip_ipaddr_t gatd_ip;
 static struct simple_udp_connection udp_conn;
 
 fram_config_t config;
 
-uint8_t state = 2;
-uint32_t energy;
-
-// Where to send message on power state change
-uip_ip6addr_t notify_statechange_ipaddr = {{0}};
-char notify_statechange_url[256] = {0};
+// If not using the relay, track if the device is drawing power or not
+uint8_t  load_energy_onoff = 2;
+uint32_t load_energy;
 
 
 PROCESS(acme, "ACme++ With CoAP Support");
+PROCESS(acme_coap_client, "Issue CoAP POST");
 AUTOSTART_PROCESSES(&acme);
 
 
@@ -89,15 +92,86 @@ static void load_set (uint8_t on_off) {
   else if (on_off == RELAY_OFF) load_off();
 }
 
+int
+coap_parse_uint (void* request, uint32_t* u)
+{
+  int length;
+  const char* payload = NULL;
+
+  length = REST.get_request_payload(request, (const uint8_t**) &payload);
+
+  if (length > 0) {
+    *u = strtol(payload, NULL, 10);
+    return 0;
+  }
+
+  return -1;
+}
+
 void
 client_chunk_handler(void *response)
 {
-  // const uint8_t *chunk;
 
-  // int len = coap_get_payload(response, &chunk);
-
-  // printf("|%.*s", len, (char *)chunk);
 }
+
+
+
+
+static void
+state_changed (struct pt* process_pt, process_event_t ev) {
+
+  leds_toggle(LEDS_RED);
+
+  // Check that we have someone to tell
+  if (config.notify_statechange_ipaddr.u8[0] != 0 &&
+      config.notify_statechange_url[0] != 0) {
+
+    coap_init_message(request, COAP_TYPE_CON, COAP_POST, 0);
+    coap_set_header_uri_path(request, config.notify_statechange_url);
+
+    if (load_energy_onoff) {
+      coap_set_payload(request, (uint8_t*) "true", 4);
+    } else {
+      coap_set_payload(request, (uint8_t*) "false", 5);
+    }
+
+    process_start(&acme_coap_client, NULL);
+
+  }
+
+}
+
+// Pass this magic `process_pt` around everywhere. It comes from the contiki
+// macros and you just have to trust it will be there.
+static void
+periodic_sample (struct pt* process_pt, process_event_t ev) {
+
+  load_energy = ade7753_getActiveEnergy();
+
+  // Check for a state change
+  uint8_t current_state = 0;
+  if (load_energy > config.notify_statechange_threshold) {
+    current_state = 1;
+  }
+
+  if (load_energy_onoff == 2) {
+    // unknown at startup
+    load_energy_onoff = current_state;
+    state_changed(process_pt, ev);
+  } else if (load_energy_onoff == 1) {
+    load_energy_onoff = current_state;
+    if (current_state == 0) {
+      state_changed(process_pt, ev);
+    }
+  } else {
+    load_energy_onoff = current_state;
+    if (current_state == 1) {
+      state_changed(process_pt, ev);
+    }
+  }
+
+}
+
 
 
 
@@ -169,11 +243,11 @@ int inet_ntop6 (const uip_ipaddr_t *addr, char *buf, int cnt) {
 
 
 /*******************************************************************************
- * onoffdevice
+ * onoff
  ******************************************************************************/
 
 static void
-onoffdevice_get_handler(void *request,
+onoff_get_handler(void *request,
                   void *response,
                   uint8_t *buffer,
                   uint16_t preferred_size,
@@ -187,7 +261,7 @@ onoffdevice_get_handler(void *request,
 }
 
 static void
-onoffdevice_post_handler(void *request,
+onoff_post_handler(void *request,
                   void *response,
                   uint8_t *buffer,
                   uint16_t preferred_size,
@@ -209,20 +283,20 @@ onoffdevice_post_handler(void *request,
   }
 }
 
-RESOURCE(coap_onoffdevice,
+RESOURCE(coap_onoff,
          "title=\"onoffdevice\";rt=\"AC Relay\"",
-         onoffdevice_get_handler,
-         onoffdevice_post_handler,
-         onoffdevice_post_handler,
+         onoff_get_handler,
+         onoff_post_handler,
+         onoff_post_handler,
          NULL);
 
 
 /*******************************************************************************
- * onoffdevice/Power
+ * onoff/Power
  ******************************************************************************/
 
 static void
-onoffdevice_power_get_handler(void *request,
+onoff_power_get_handler(void *request,
                   void *response,
                   uint8_t *buffer,
                   uint16_t preferred_size,
@@ -236,7 +310,7 @@ onoffdevice_power_get_handler(void *request,
 }
 
 static void
-onoffdevice_power_post_handler(void *request,
+onoff_power_post_handler(void *request,
                   void *response,
                   uint8_t *buffer,
                   uint16_t preferred_size,
@@ -258,11 +332,11 @@ onoffdevice_power_post_handler(void *request,
   }
 }
 
-RESOURCE(coap_onoffdevice_power,
+RESOURCE(coap_onoff_power,
          "title=\"onoffdevice/Power\";rt=\"AC Relay\"",
-         onoffdevice_power_get_handler,
-         onoffdevice_power_post_handler,
-         onoffdevice_power_post_handler,
+         onoff_power_get_handler,
+         onoff_power_post_handler,
+         onoff_power_post_handler,
          NULL);
 
 /*******************************************************************************
@@ -409,7 +483,7 @@ powermeter_voltage_get_handler(void *request,
                   int32_t *offset)
 {
   int length;
-  char res[] = "Voltage=%u";
+  char res[] = "%u";
 
   uint32_t voltage = ade7753_getMaxVoltage();
 
@@ -439,13 +513,13 @@ powermeter_power_get_handler(void *request,
                   int32_t *offset)
 {
   int length;
-  char res[] = "Power=%i";
+  char res[] = "%i";
 
-  int32_t  power   = energy;
+  int32_t power = load_energy;
 
   length = snprintf((char*) buffer, REST_MAX_CHUNK_SIZE, res, power);
 
-  REST.set_header_content_type(response, REST.type.APPLICATION_JSON);
+  REST.set_header_content_type(response, REST.type.TEXT_PLAIN);
   REST.set_response_payload(response, buffer, length);
 }
 
@@ -468,7 +542,7 @@ powermeter_period_get_handler(void *request,
                   int32_t *offset)
 {
   int length;
-  char res[] = "Period=%u";
+  char res[] = "%u";
 
   uint32_t period  = ade7753_readReg(ADEREG_PERIOD);
 
@@ -488,6 +562,50 @@ RESOURCE(coap_powermeter_period,
 
 
 /*******************************************************************************
+ * notify/statechange/Threshold
+ ******************************************************************************/
+
+static void
+notify_statechange_threshold_get_handler(void *request,
+                       void *response,
+                       uint8_t *buffer,
+                       uint16_t preferred_size,
+                       int32_t *offset) {
+  int length;
+
+  length = snprintf((char*) buffer, REST_MAX_CHUNK_SIZE, "%u", (unsigned int) config.notify_statechange_threshold);
+
+  REST.set_header_content_type(response, REST.type.TEXT_PLAIN);
+  REST.set_response_payload(response, buffer, length);
+}
+
+static void
+notify_statechange_threshold_post_handler(void *request,
+                  void *response,
+                  uint8_t *buffer,
+                  uint16_t preferred_size,
+                  int32_t *offset) {
+
+  uint32_t u;
+  int ret;
+
+  ret = coap_parse_uint(request, &u);
+
+  if (ret < 0) {
+    REST.set_response_status(response, REST.status.BAD_REQUEST);
+  } else {
+    config.notify_statechange_threshold = u;
+  }
+}
+
+RESOURCE(coap_notify_statechange_threshold,
+         "title=\"Note State Change\";rt=\"Notify\"",
+         notify_statechange_threshold_get_handler,
+         notify_statechange_threshold_post_handler,
+         notify_statechange_threshold_post_handler,
+         NULL);
+
+/*******************************************************************************
  * notify/statechange/IPAddr
  ******************************************************************************/
 
@@ -501,7 +619,7 @@ notify_statechange_ipaddr_get_handler(void *request,
   char res[] = "%s";
   char ipbuf[40];
 
-  inet_ntop6(&notify_statechange_ipaddr, ipbuf, 40);
+  inet_ntop6(&config.notify_statechange_ipaddr, ipbuf, 40);
   length = snprintf((char*) buffer, REST_MAX_CHUNK_SIZE, res, ipbuf);
 
   REST.set_header_content_type(response, REST.type.TEXT_PLAIN);
@@ -525,7 +643,8 @@ notify_statechange_ipaddr_post_handler(void *request,
     ret = uiplib_ip6addrconv(payload, &new_ip);
 
     if (ret) {
-      memcpy(notify_statechange_ipaddr.u8, new_ip.u8, sizeof(uip_ip6addr_t));
+      memcpy(config.notify_statechange_ipaddr.u8, new_ip.u8, sizeof(uip_ip6addr_t));
+      write_config();
     } else {
       REST.set_response_status(response, REST.status.BAD_REQUEST);
     }
@@ -554,7 +673,7 @@ notify_statechange_url_get_handler(void *request,
                        int32_t *offset) {
   int length;
 
-  length = snprintf((char*) buffer, REST_MAX_CHUNK_SIZE, "%s", notify_statechange_url);
+  length = snprintf((char*) buffer, REST_MAX_CHUNK_SIZE, "%s", config.notify_statechange_url);
 
   REST.set_header_content_type(response, REST.type.TEXT_PLAIN);
   REST.set_response_payload(response, buffer, length);
@@ -571,7 +690,8 @@ notify_statechange_url_post_handler(void *request,
 
   length = REST.get_request_payload(request, (const uint8_t**) &payload);
   if (length > 0) {
-    strncpy(notify_statechange_url, payload, 256);
+    strncpy(config.notify_statechange_url, payload, 40);
+    write_config();
   } else {
     REST.set_response_status(response, REST.status.BAD_REQUEST);
   }
@@ -767,6 +887,9 @@ PROCESS_THREAD(acme, ev, data) {
     // First boot
     config.magic_id = MAGICID;
     config.power_state = RELAY_OFF;
+    memset(&config.notify_statechange_ipaddr, 0, sizeof(uip_ip6addr_t));
+    memset(config.notify_statechange_url, 0, 40);
+    config.notify_statechange_threshold = 2; // 2 watts by default
     write_config();
   }
 
@@ -784,24 +907,25 @@ PROCESS_THREAD(acme, ev, data) {
   // CoAP + REST
   rest_init_engine();
 
-  rest_activate_resource(&coap_onoffdevice,        "onoffdevice");
-  rest_activate_resource(&coap_onoffdevice_power,  "onoffdevice/Power");
+  rest_activate_resource(&coap_onoff,                        "onoff");
+  rest_activate_resource(&coap_onoff_power,                  "onoff/Power");
 
-  rest_activate_resource(&coap_led,                "led");
-  rest_activate_resource(&coap_led_power,          "led/Power");
+  rest_activate_resource(&coap_led,                          "led");
+  rest_activate_resource(&coap_led_power,                    "led/Power");
 
-  rest_activate_resource(&coap_powermeter,         "powermeter");
-  rest_activate_resource(&coap_powermeter_voltage, "powermeter/Voltage");
-  rest_activate_resource(&coap_powermeter_power,   "powermeter/Power");
-  rest_activate_resource(&coap_powermeter_period,  "powermeter/Period");
+  rest_activate_resource(&coap_powermeter,                   "powermeter");
+  rest_activate_resource(&coap_powermeter_voltage,           "powermeter/Voltage");
+  rest_activate_resource(&coap_powermeter_power,             "powermeter/Power");
+  rest_activate_resource(&coap_powermeter_period,            "powermeter/Period");
 
-  rest_activate_resource(&coap_notify_statechange_ipaddr, "notify/statechange/IPAddr");
-  rest_activate_resource(&coap_notify_statechange_url,    "notify/statechange/URL");
+  rest_activate_resource(&coap_notify_statechange_threshold, "notify/statechange/Threshold");
+  rest_activate_resource(&coap_notify_statechange_ipaddr,    "notify/statechange/IPAddr");
+  rest_activate_resource(&coap_notify_statechange_url,       "notify/statechange/URL");
 
-  rest_activate_resource(&coap_device,             "device");
-  rest_activate_resource(&coap_device_gatdip,      "device/GATD_IP");
-  rest_activate_resource(&coap_device_software_version, "device/software/Version");
-  rest_activate_resource(&coap_device_hardware_version, "device/hardware/Version");
+  rest_activate_resource(&coap_device,                       "device");
+  rest_activate_resource(&coap_device_gatdip,                "device/GATD_IP");
+  rest_activate_resource(&coap_device_software_version,      "device/software/Version");
+  rest_activate_resource(&coap_device_hardware_version,      "device/hardware/Version");
 
   // CoAP Client
   coap_init_engine();
@@ -812,78 +936,31 @@ PROCESS_THREAD(acme, ev, data) {
     PROCESS_WAIT_EVENT();
 
     if (etimer_expired(&periodic_power_sample)) {
-      // periodic_sample();
-
-
-      // Putting this here because Contiki is a mess of macros...
-
-goto state_changed;
-      energy = ade7753_getActiveEnergy();
-
-      // Check for a state change
-      {
-        uint8_t current_state = 0;
-        if (energy > 1) {
-          current_state = 1;
-        }
-
-        if (state == 2) {
-          // unknown at startup
-          state = current_state;
-          // state_changed();
-          goto state_changed;
-        } else if (state == 1) {
-          state = current_state;
-          if (current_state == 0) {
-            // state_changed();
-          goto state_changed;
-          }
-        } else {
-          state = current_state;
-          if (current_state == 1) {
-            // state_changed();
-          goto state_changed;
-          }
-        }
-
-state_changed:
-
-        leds_toggle(LEDS_RED);
-
-        // Check that we have someone to tell
-        if (notify_statechange_ipaddr.u8[0] != 0 && notify_statechange_url[0] != 0) {
-
-          coap_packet_t request[1];
-
-          /* prepare request, TID is set by COAP_BLOCKING_REQUEST() */
-          coap_init_message(request, COAP_TYPE_CON, COAP_POST, 0);
-          coap_set_header_uri_path(request, notify_statechange_url);
-
-          const char msg[] = "Toggle!";
-
-          coap_set_payload(request, (uint8_t *)"true", 4);
-
-          // PRINT6ADDR(&server_ipaddr);
-          // PRINTF(" : %u\n", UIP_HTONS(REMOTE_PORT));
-
-          COAP_BLOCKING_REQUEST(&notify_statechange_ipaddr, UIP_HTONS(COAP_DEFAULT_PORT), request,
-                                client_chunk_handler);
-
-
-        }
-
-
-
-      }
-
-done:
-
-          // COAP_BLOCKING_REQUEST(&notify_statechange_ipaddr, UIP_HTONS(COAP_DEFAULT_PORT), request,
-          //                 client_chunk_handler);
-
+      periodic_sample(process_pt, ev);
       etimer_restart(&periodic_power_sample);
     }
   }
 
   PROCESS_END();
 }
+
+
+// Process / protothread / whatever for making coap requests
+PROCESS_THREAD(acme_coap_client, ev, data) {
+  PROCESS_BEGIN();
+
+  // This HAS to be in a PROCESS_THREAD block.
+  // You can ask Pat or Adam Dunkels why. It should be noted that Pat does
+  // not support this, endorse this, or think this is even sort of a good idea.
+  // But he understands what is happening.
+  COAP_BLOCKING_REQUEST(&config.notify_statechange_ipaddr,
+                        UIP_HTONS(COAP_DEFAULT_PORT),
+                        request,
+                        client_chunk_handler);
+
+  PROCESS_END();
+}
+
+
+
+

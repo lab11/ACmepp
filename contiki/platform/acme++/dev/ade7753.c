@@ -47,6 +47,10 @@ uint32_t ade7753_getActiveEnergy() {
 	uint32_t energy;
 
 	energy = ade7753_readReg(ADEREG_RAENERGY);
+	if (energy > 10000) {
+		// Some absurdly large thing, this means 0
+		return 0;
+	}
 
 	return energy;
 }

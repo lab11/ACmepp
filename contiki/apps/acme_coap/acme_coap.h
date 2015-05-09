@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#include "net/ip/uip.h"
+
 // Constant to keep track of which revision of coilcube sent the packet.
 // This will probably be useful to determine what wakeups and packets mean.
 //#define SEHNSOR_VERSION 2
@@ -12,13 +14,18 @@
 #define GATD_ADDR "2001:470:1f10:1320::2"
 #define GATD_PORT 4001
 
-#define MAGICID 0xBD30
+#define MAGICID 0xBD32
 
 #define FRAM_ADDR_CONFIG 0
 
 typedef struct {
   uint32_t magic_id;
   uint8_t power_state;
+  // Where to send message on power state change
+  uint32_t notify_statechange_threshold;
+  uip_ip6addr_t notify_statechange_ipaddr;
+  char notify_statechange_url[40];
+
 } fram_config_t;
 
 
